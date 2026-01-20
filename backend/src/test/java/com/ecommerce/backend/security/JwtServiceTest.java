@@ -1,25 +1,22 @@
 package com.ecommerce.backend.security;
 
-import com.ecommerce.backend.model.Role;
-import com.ecommerce.backend.model.User;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.test.util.ReflectionTestUtils;
+import static org.junit.jupiter.api.Assertions.*;
 
-import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import com.ecommerce.backend.model.Role;
+import com.ecommerce.backend.model.User;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.util.ReflectionTestUtils;
 
 class JwtServiceTest {
 
     private JwtService jwtService;
-    
+
     // Test secret key - Base64 encoded 256-bit key for testing purposes
     private static final String TEST_SECRET_KEY = "dGVzdC1zZWNyZXQta2V5LWZvci1qd3QtdG9rZW4tZ2VuZXJhdGlvbi0yNTYtYml0cw==";
     private static final long TEST_EXPIRATION = 86400000L; // 24 hours in milliseconds
@@ -29,11 +26,11 @@ class JwtServiceTest {
     @BeforeEach
     void setUp() {
         jwtService = new JwtService();
-        
+
         // Set the private fields using reflection for testing
         ReflectionTestUtils.setField(jwtService, "secretKey", TEST_SECRET_KEY);
         ReflectionTestUtils.setField(jwtService, "jwtExpiration", TEST_EXPIRATION);
-        
+
         testUser = User.builder()
                 .id(1L)
                 .firstName("John")
@@ -114,7 +111,7 @@ class JwtServiceTest {
     void isTokenValid_ShouldReturnFalse_WhenUsernameDoesNotMatch() {
         // Arrange
         String token = jwtService.generateToken(testUser);
-        
+
         User differentUser = User.builder()
                 .email("different@example.com")
                 .password("password")
@@ -132,9 +129,9 @@ class JwtServiceTest {
     void isTokenValid_ShouldThrowException_WhenTokenIsExpired() {
         // Arrange - Set a very short expiration for this test
         ReflectionTestUtils.setField(jwtService, "jwtExpiration", 1L); // 1 millisecond
-        
+
         String token = jwtService.generateToken(testUser);
-        
+
         // Wait for token to expire
         try {
             Thread.sleep(50);
@@ -143,10 +140,10 @@ class JwtServiceTest {
         }
 
         // Act & Assert - JWT library throws ExpiredJwtException for expired tokens
-        assertThrows(io.jsonwebtoken.ExpiredJwtException.class, () -> 
+        assertThrows(io.jsonwebtoken.ExpiredJwtException.class, () ->
             jwtService.isTokenValid(token, testUser)
         );
-        
+
         // Reset expiration for other tests
         ReflectionTestUtils.setField(jwtService, "jwtExpiration", TEST_EXPIRATION);
     }

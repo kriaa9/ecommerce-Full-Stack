@@ -1,10 +1,17 @@
 package com.ecommerce.backend.controller;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+import java.security.Principal;
+
 import com.ecommerce.backend.dto.UpdateUserRequest;
 import com.ecommerce.backend.dto.UserResponse;
 import com.ecommerce.backend.model.Gender;
 import com.ecommerce.backend.model.Role;
 import com.ecommerce.backend.service.UserService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -12,12 +19,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.security.Principal;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 class UserControllerTest {
 
@@ -35,7 +36,7 @@ class UserControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        
+
         testUserResponse = UserResponse.builder()
                 .firstName("John")
                 .lastName("Doe")
@@ -101,14 +102,14 @@ class UserControllerTest {
                 .firstName("Jane")
                 .lastName("Smith")
                 .build();
-        
+
         UserResponse updatedResponse = UserResponse.builder()
                 .firstName("Jane")
                 .lastName("Smith")
                 .email("john.doe@example.com")
                 .role(Role.USER)
                 .build();
-        
+
         when(userService.updateMyProfile(any(UpdateUserRequest.class), any(Principal.class)))
                 .thenReturn(updatedResponse);
 
@@ -128,7 +129,7 @@ class UserControllerTest {
                 .lastName("Smith")
                 .gender(Gender.FEMALE)
                 .build();
-        
+
         UserResponse updatedResponse = UserResponse.builder()
                 .firstName("Jane")
                 .lastName("Smith")
@@ -136,7 +137,7 @@ class UserControllerTest {
                 .role(Role.USER)
                 .gender(Gender.FEMALE)
                 .build();
-        
+
         when(userService.updateMyProfile(request, principal)).thenReturn(updatedResponse);
 
         // Act
@@ -156,7 +157,7 @@ class UserControllerTest {
         UpdateUserRequest request = UpdateUserRequest.builder()
                 .firstName("Updated")
                 .build();
-        
+
         when(userService.updateMyProfile(any(UpdateUserRequest.class), any(Principal.class)))
                 .thenReturn(testUserResponse);
 
@@ -173,7 +174,7 @@ class UserControllerTest {
         UpdateUserRequest request = UpdateUserRequest.builder()
                 .address("456 New Street")
                 .build();
-        
+
         UserResponse updatedResponse = UserResponse.builder()
                 .firstName("John")
                 .lastName("Doe")
@@ -181,7 +182,7 @@ class UserControllerTest {
                 .role(Role.USER)
                 .address("456 New Street")
                 .build();
-        
+
         when(userService.updateMyProfile(request, principal)).thenReturn(updatedResponse);
 
         // Act
@@ -242,7 +243,7 @@ class UserControllerTest {
         UpdateUserRequest updateRequest = UpdateUserRequest.builder()
                 .firstName("Test")
                 .build();
-        
+
         when(userService.getCurrentUserProfile(principal)).thenReturn(testUserResponse);
         when(userService.updateMyProfile(updateRequest, principal)).thenReturn(testUserResponse);
         doNothing().when(userService).deleteMyAccount(principal);

@@ -1,5 +1,9 @@
 package com.ecommerce.backend.auth;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -7,10 +11,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 class AuthenticationControllerTest {
 
@@ -25,7 +25,7 @@ class AuthenticationControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        
+
         testAuthResponse = AuthenticationResponse.builder()
                 .token("test-jwt-token")
                 .role("USER")
@@ -46,7 +46,7 @@ class AuthenticationControllerTest {
                 .email("john.doe@example.com")
                 .password("password123")
                 .build();
-        
+
         when(authenticationService.register(any(RegisterRequest.class))).thenReturn(testAuthResponse);
 
         // Act
@@ -66,7 +66,7 @@ class AuthenticationControllerTest {
                 .email("john.doe@example.com")
                 .password("password123")
                 .build();
-        
+
         when(authenticationService.register(request)).thenReturn(testAuthResponse);
 
         // Act
@@ -88,7 +88,7 @@ class AuthenticationControllerTest {
                 .email("jane.smith@example.com")
                 .password("securePassword")
                 .build();
-        
+
         AuthenticationResponse expectedResponse = AuthenticationResponse.builder()
                 .token("new-jwt-token")
                 .role("USER")
@@ -96,7 +96,7 @@ class AuthenticationControllerTest {
                 .lastName("Smith")
                 .email("jane.smith@example.com")
                 .build();
-        
+
         when(authenticationService.register(request)).thenReturn(expectedResponse);
 
         // Act
@@ -119,7 +119,7 @@ class AuthenticationControllerTest {
                 .email("test@example.com")
                 .password("testPassword")
                 .build();
-        
+
         when(authenticationService.register(any(RegisterRequest.class))).thenReturn(testAuthResponse);
 
         // Act
@@ -138,7 +138,7 @@ class AuthenticationControllerTest {
                 .email("single.call@example.com")
                 .password("password")
                 .build();
-        
+
         when(authenticationService.register(request)).thenReturn(testAuthResponse);
 
         // Act
@@ -158,7 +158,7 @@ class AuthenticationControllerTest {
                 .email("john.doe@example.com")
                 .password("password123")
                 .build();
-        
+
         when(authenticationService.authenticate(any(AuthenticationRequest.class))).thenReturn(testAuthResponse);
 
         // Act
@@ -176,7 +176,7 @@ class AuthenticationControllerTest {
                 .email("john.doe@example.com")
                 .password("password123")
                 .build();
-        
+
         when(authenticationService.authenticate(request)).thenReturn(testAuthResponse);
 
         // Act
@@ -196,7 +196,7 @@ class AuthenticationControllerTest {
                 .email("john.doe@example.com")
                 .password("password123")
                 .build();
-        
+
         when(authenticationService.authenticate(request)).thenReturn(testAuthResponse);
 
         // Act
@@ -217,7 +217,7 @@ class AuthenticationControllerTest {
                 .email("test@example.com")
                 .password("testPassword")
                 .build();
-        
+
         when(authenticationService.authenticate(any(AuthenticationRequest.class))).thenReturn(testAuthResponse);
 
         // Act
@@ -234,7 +234,7 @@ class AuthenticationControllerTest {
                 .email("single.call@example.com")
                 .password("password")
                 .build();
-        
+
         when(authenticationService.authenticate(request)).thenReturn(testAuthResponse);
 
         // Act
@@ -256,7 +256,7 @@ class AuthenticationControllerTest {
                 .email("existing@example.com")
                 .password("password")
                 .build();
-        
+
         when(authenticationService.register(request)).thenThrow(new RuntimeException("Email already exists"));
 
         // Act & Assert
@@ -270,7 +270,7 @@ class AuthenticationControllerTest {
                 .email("wrong@example.com")
                 .password("wrongPassword")
                 .build();
-        
+
         when(authenticationService.authenticate(request))
                 .thenThrow(new RuntimeException("Bad credentials"));
 
@@ -289,7 +289,7 @@ class AuthenticationControllerTest {
                 .email("complete@example.com")
                 .password("password")
                 .build();
-        
+
         AuthenticationResponse completeResponse = AuthenticationResponse.builder()
                 .token("complete-token")
                 .role("USER")
@@ -297,7 +297,7 @@ class AuthenticationControllerTest {
                 .lastName("Response")
                 .email("complete@example.com")
                 .build();
-        
+
         when(authenticationService.register(request)).thenReturn(completeResponse);
 
         // Act
@@ -320,7 +320,7 @@ class AuthenticationControllerTest {
                 .email("complete@example.com")
                 .password("password")
                 .build();
-        
+
         AuthenticationResponse completeResponse = AuthenticationResponse.builder()
                 .token("complete-token")
                 .role("USER")
@@ -328,7 +328,7 @@ class AuthenticationControllerTest {
                 .lastName("Response")
                 .email("complete@example.com")
                 .build();
-        
+
         when(authenticationService.authenticate(request)).thenReturn(completeResponse);
 
         // Act

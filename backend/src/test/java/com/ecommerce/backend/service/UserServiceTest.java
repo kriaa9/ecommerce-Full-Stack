@@ -1,24 +1,25 @@
 package com.ecommerce.backend.service;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
+
+import java.security.Principal;
+import java.util.Optional;
+
 import com.ecommerce.backend.dto.UpdateUserRequest;
 import com.ecommerce.backend.dto.UserResponse;
 import com.ecommerce.backend.model.Gender;
 import com.ecommerce.backend.model.Role;
 import com.ecommerce.backend.model.User;
 import com.ecommerce.backend.repository.UserRepository;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
-import java.security.Principal;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 class UserServiceTest {
 
@@ -36,7 +37,7 @@ class UserServiceTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        
+
         testUser = User.builder()
                 .id(1L)
                 .firstName("John")
@@ -77,7 +78,7 @@ class UserServiceTest {
         when(userRepository.findByEmail("nonexistent@example.com")).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(UsernameNotFoundException.class, () -> 
+        assertThrows(UsernameNotFoundException.class, () ->
             userService.getCurrentUserProfile(principal)
         );
         verify(userRepository, times(1)).findByEmail("nonexistent@example.com");
@@ -91,7 +92,7 @@ class UserServiceTest {
         UpdateUserRequest request = UpdateUserRequest.builder()
                 .firstName("Jane")
                 .build();
-        
+
         when(principal.getName()).thenReturn("john.doe@example.com");
         when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(testUser));
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -111,7 +112,7 @@ class UserServiceTest {
         UpdateUserRequest request = UpdateUserRequest.builder()
                 .lastName("Smith")
                 .build();
-        
+
         when(principal.getName()).thenReturn("john.doe@example.com");
         when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(testUser));
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -131,7 +132,7 @@ class UserServiceTest {
         UpdateUserRequest request = UpdateUserRequest.builder()
                 .gender(Gender.FEMALE)
                 .build();
-        
+
         when(principal.getName()).thenReturn("john.doe@example.com");
         when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(testUser));
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -150,7 +151,7 @@ class UserServiceTest {
         UpdateUserRequest request = UpdateUserRequest.builder()
                 .address("456 Oak Ave")
                 .build();
-        
+
         when(principal.getName()).thenReturn("john.doe@example.com");
         when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(testUser));
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -172,7 +173,7 @@ class UserServiceTest {
                 .mobile("555-5678")
                 .fax("555-9999")
                 .build();
-        
+
         when(principal.getName()).thenReturn("john.doe@example.com");
         when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(testUser));
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -196,7 +197,7 @@ class UserServiceTest {
                 .position("Senior Developer")
                 .socialMediaContact("@johndoe")
                 .build();
-        
+
         when(principal.getName()).thenReturn("john.doe@example.com");
         when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(testUser));
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -217,7 +218,7 @@ class UserServiceTest {
         UpdateUserRequest request = UpdateUserRequest.builder()
                 .firstName("   ")  // Blank string should be ignored
                 .build();
-        
+
         when(principal.getName()).thenReturn("john.doe@example.com");
         when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(testUser));
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -235,7 +236,7 @@ class UserServiceTest {
         UpdateUserRequest request = UpdateUserRequest.builder()
                 .lastName("")  // Empty string should be ignored
                 .build();
-        
+
         when(principal.getName()).thenReturn("john.doe@example.com");
         when(userRepository.findByEmail("john.doe@example.com")).thenReturn(Optional.of(testUser));
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -253,12 +254,12 @@ class UserServiceTest {
         UpdateUserRequest request = UpdateUserRequest.builder()
                 .firstName("Jane")
                 .build();
-        
+
         when(principal.getName()).thenReturn("nonexistent@example.com");
         when(userRepository.findByEmail("nonexistent@example.com")).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(UsernameNotFoundException.class, () -> 
+        assertThrows(UsernameNotFoundException.class, () ->
             userService.updateMyProfile(request, principal)
         );
         verify(userRepository, never()).save(any(User.class));
@@ -287,7 +288,7 @@ class UserServiceTest {
         when(userRepository.findByEmail("nonexistent@example.com")).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(UsernameNotFoundException.class, () -> 
+        assertThrows(UsernameNotFoundException.class, () ->
             userService.deleteMyAccount(principal)
         );
         verify(userRepository, never()).delete(any(User.class));
