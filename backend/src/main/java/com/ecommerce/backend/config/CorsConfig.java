@@ -11,7 +11,7 @@ public class CorsConfig implements WebMvcConfigurer {
 
    /**
      * Configures Cross-Origin Resource Sharing (CORS) settings for the application.
-     * Allows requests from http://localhost:3600 with specified methods, headers,
+     * Allows requests from http://localhost:5173 with specified methods, headers,
      * and credentials to access endpoints under /api/**.
      *
      * @return WebMvcConfigurer implementation that applies CORS configuration
@@ -23,7 +23,7 @@ public class CorsConfig implements WebMvcConfigurer {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/api/**")
-                        .allowedOrigins("http://localhost:4173/")
+                        .allowedOrigins("http://localhost:5173")
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);
