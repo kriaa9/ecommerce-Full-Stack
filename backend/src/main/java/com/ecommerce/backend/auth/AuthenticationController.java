@@ -46,4 +46,17 @@ public class AuthenticationController {
     ) {
         return ResponseEntity.ok(service.authenticate(request));
     }
+
+    /**
+     * Handles user logout requests.
+     * For JWT-based authentication, logout is primarily handled client-side by removing the token.
+     * This endpoint confirms the logout action.
+     *
+     * @return a ResponseEntity containing a success message
+     */
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout() {
+        return ResponseEntity.ok("Logged out successfully");
+    }
+
 }
