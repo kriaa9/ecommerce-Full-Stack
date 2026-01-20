@@ -41,6 +41,7 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // --- Basic Info ---
     @NotBlank(message = "First name is required")
     @Size(min = 2, max = 50, message = "First name must be between 2 and 50 characters")
     @Column(name = "first_name", nullable = false, length = 50)
@@ -51,11 +52,43 @@ public class User implements UserDetails {
     @Column(name = "last_name", nullable = false, length = 50)
     private String lastName;
 
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
+
+    // --- Contact Info ---
     @NotBlank(message = "Email is required")
     @Email(message = "Please provide a valid email address")
     @Column(nullable = false, unique = true, length = 100)
     private String email;
 
+    @Email(message = "Please provide a valid backup email address")
+    @Column(name = "backup_email", length = 100)
+    private String backupEmail;
+
+    @Column(name = "telephone", length = 20)
+    private String telephone;
+
+    @Column(name = "mobile", length = 20)
+    private String mobile;
+
+    @Column(name = "fax", length = 20)
+    private String fax;
+
+    // --- Work Info ---
+    @Column(name = "address")
+    private String address; // Stores full address string
+
+    @Column(name = "department", length = 100)
+    private String department;
+
+    @Column(name = "position", length = 100)
+    private String position;
+
+    @Column(name = "social_media_contact")
+    private String socialMediaContact;
+
+    // --- Security ---
     @NotBlank(message = "Password is required")
     @Size(min = 8, message = "Password must be at least 8 characters")
     @Column(nullable = false)
@@ -66,6 +99,7 @@ public class User implements UserDetails {
     @Builder.Default
     private Role role = Role.USER;
 
+    // --- Timestamps ---
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -83,7 +117,7 @@ public class User implements UserDetails {
         updatedAt = LocalDateTime.now();
     }
 
-    // UserDetails implementation
+    // --- UserDetails Implementation ---
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
@@ -95,22 +129,14 @@ public class User implements UserDetails {
     }
 
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
+    public boolean isAccountNonExpired() { return true; }
 
     @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
+    public boolean isAccountNonLocked() { return true; }
 
     @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
+    public boolean isCredentialsNonExpired() { return true; }
 
     @Override
-    public boolean isEnabled() {
-        return true;
-    }
+    public boolean isEnabled() { return true; }
 }
