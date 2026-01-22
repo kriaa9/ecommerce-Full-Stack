@@ -1,0 +1,58 @@
+services:
+  # --- Database Service ---
+  postgres:
+    image: postgres:15-alpine
+    container_name: ecommerce-db
+    environment:
+      POSTGRES_DB: ecommerce
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+    ports:
+      - "5432:5432" # Allows you to connect using DBeaver/pgAdmin from host
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ecommerce-network
+    restart: always
+
+  # --- Backend Service ---
+  backend:
+    build:
+      context: ./backend # Point this to your backend folder
+      dockerfile: Dockerfile
+    container_name: ecommerce-backend
+    ports:
+      - "8080:8080"
+    environment:
+      # OVERRIDE application.properties FOR DOCKER
+      # We point 'localhost' to the service name 'postgres'
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ecommerce
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: root
+      # Ensure profile is active
+      SPRING_PROFILES_ACTIVE: prod
+    depends_on:
+      - postgres
+    networks:
+      - ecommerce-network
+
+  # --- Frontend Service ---
+  frontend:
+    build:
+      context: ./frontend # Point this to your frontend folder
+      dockerfile: Dockerfile
+    container_name: ecommerce-frontend
+    ports:
+      - "5173:80" # Maps local port 5173 to container port 80 (Nginx)
+    depends_on:
+      - backend
+    networks:
+      - ecommerce-network
+
+# --- Volumes & Networks ---
+volumes:
+  postgres_data: # Persist DB data even if you delete containers
+
+networks:
+  ecommerce-network:
+    driver: bridge
