@@ -22,6 +22,7 @@ import java.util.List;
 @Table(name = "products", uniqueConstraints = {
         @UniqueConstraint(columnNames = "sku")
 })
+@com.fasterxml.jackson.annotation.JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Product {
 
     @Id

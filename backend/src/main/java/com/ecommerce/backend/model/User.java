@@ -35,6 +35,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email")
 })
+@com.fasterxml.jackson.annotation.JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class User implements UserDetails {
 
     @Id
@@ -51,8 +52,6 @@ public class User implements UserDetails {
     @Size(min = 2, max = 50, message = "Last name must be between 2 and 50 characters")
     @Column(name = "last_name", nullable = false, length = 50)
     private String lastName;
-
-    
 
     @Enumerated(EnumType.STRING)
     private Gender gender;

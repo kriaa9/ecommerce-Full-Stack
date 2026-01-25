@@ -50,12 +50,17 @@ public class AdminController {
     }
 
     // ================= PRODUCT OPERATIONS =================
+
+    @GetMapping("/products")
+    public ResponseEntity<List<Product>> getAllProducts() {
+        return ResponseEntity.ok(productService.getAllProducts());
+    }
+
     @PostMapping(value = "/products", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Product> createProduct(
             @RequestPart("product") ProductRequest productRequest,
             @RequestPart(value = "images", required = false) List<MultipartFile> images,
-            Principal principal
-    ) {
+            Principal principal) {
         try {
             return ResponseEntity.ok(productService.createProduct(productRequest, images, principal));
         } catch (IOException e) {
@@ -66,8 +71,7 @@ public class AdminController {
     @PutMapping("/products/{id}")
     public ResponseEntity<Product> updateProduct(
             @PathVariable Long id,
-            @RequestBody ProductRequest productRequest
-    ) {
+            @RequestBody ProductRequest productRequest) {
         return ResponseEntity.ok(productService.updateProduct(id, productRequest));
     }
 

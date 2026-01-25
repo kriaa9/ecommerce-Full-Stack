@@ -15,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "categories")
+@com.fasterxml.jackson.annotation.JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Category {
 
     @Id
@@ -34,5 +35,6 @@ public class Category {
     // One Category has many Products
     // "mappedBy" refers to the 'category' field in the Product class
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<Product> products;
 }

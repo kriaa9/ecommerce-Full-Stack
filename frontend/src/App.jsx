@@ -5,6 +5,10 @@ import Register from './auth/register/Register';
 import Profile from './profile/Profile';
 import AdminLayout from './admin/dashboard/AdminLayout';
 import AdminDashboard from './admin/dashboard/AdminDashboard';
+import CategoryList from './admin/categories/CategoryList';
+import CategoryForm from './admin/categories/CategoryForm';
+import ProductList from './admin/products/ProductList';
+import ProductForm from './admin/products/ProductForm';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
 import authService from './api/authService'; // ✅ Import authService
@@ -107,9 +111,12 @@ function App() {
                 }>
                     <Route index element={<Navigate to="dashboard" replace />} />
                     <Route path="dashboard" element={<AdminDashboard />} />
-                    {/* Placeholder for future admin sub-routes */}
-                    <Route path="categories" element={<div>Categories Page (Coming Soon)</div>} />
-                    <Route path="products" element={<div>Products Page (Coming Soon)</div>} />
+                    <Route path="categories" element={<CategoryList />} />
+                    <Route path="categories/new" element={<CategoryForm />} />
+                    <Route path="categories/:id/edit" element={<CategoryForm />} />
+                    <Route path="products" element={<ProductList />} />
+                    <Route path="products/new" element={<ProductForm />} />
+                    <Route path="products/:id/edit" element={<ProductForm />} />
                 </Route>
                 <Route
                     path="/"
