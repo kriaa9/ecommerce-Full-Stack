@@ -20,8 +20,12 @@ const Profile = () => {
         fax: '',
         department: '',
         position: '',
-        socialMediaContact: ''
+        socialMediaContact: '',
+        profilePhotoUrl: ''
     });
+
+    const [photoFile, setPhotoFile] = useState(null);
+    const [photoPreview, setPhotoPreview] = useState(null);
 
     useEffect(() => {
         loadProfile();
@@ -31,7 +35,7 @@ const Profile = () => {
         try {
             const data = await userService.getProfile();
             setFormData(prev => ({ ...prev, ...data }));
-        } catch (error) {
+        } catch {
             setMessage({ type: 'error', text: 'Failed to load profile' });
         } finally {
             setLoading(false);
@@ -47,12 +51,63 @@ const Profile = () => {
         e.preventDefault();
         setMessage({ type: '', text: '' });
         try {
-            const { email, role, ...updateData } = formData;
+            const { email: _email, role: _role, ...updateData } = formData;
             await userService.updateProfile(updateData);
             setMessage({ type: 'success', text: 'Profile updated successfully!' });
             setIsEditing(false); // Switch back to View Mode on success
-        } catch (error) {
+        } catch {
             setMessage({ type: 'error', text: 'Failed to update profile.' });
+        }
+    };
+
+    const handlePhotoChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                setMessage({ type: 'error', text: 'Please select an image file' });
+                return;
+            }
+            
+            // Validate file size (max 10MB)
+            if (file.size > 10 * 1024 * 1024) {
+                setMessage({ type: 'error', text: 'Image size must be less than 10MB' });
+                return;
+            }
+            
+            setPhotoFile(file);
+            setPhotoPreview(URL.createObjectURL(file));
+        }
+    };
+
+    const handlePhotoUpload = async () => {
+        if (!photoFile) return;
+        
+        try {
+            const formDataObj = new FormData();
+            formDataObj.append('photo', photoFile);
+            
+            const response = await userService.uploadProfilePhoto(formDataObj);
+            setFormData(prev => ({ ...prev, profilePhotoUrl: response.profilePhotoUrl }));
+            setPhotoFile(null);
+            setPhotoPreview(null);
+            setMessage({ type: 'success', text: 'Photo uploaded successfully!' });
+        } catch {
+            setMessage({ type: 'error', text: 'Failed to upload photo' });
+        }
+    };
+
+    const handlePhotoDelete = async () => {
+        if (!window.confirm('Are you sure you want to delete your profile photo?')) {
+            return;
+        }
+        
+        try {
+            await userService.deleteProfilePhoto();
+            setFormData(prev => ({ ...prev, profilePhotoUrl: '' }));
+            setMessage({ type: 'success', text: 'Photo deleted successfully!' });
+        } catch {
+            setMessage({ type: 'error', text: 'Failed to delete photo' });
         }
     };
 
@@ -104,6 +159,48 @@ const Profile = () => {
             {message.text && <div className={`alert ${message.type}`}>{message.text}</div>}
 
             <form onSubmit={handleSubmit} className="profile-form">
+
+                <section className="form-section">
+                    <h2>Profile Photo</h2>
+                    <div className="photo-upload-container">
+                        <div className="photo-preview">
+                            {photoPreview ? (
+                                <img src={photoPreview} alt="Preview" />
+                            ) : formData.profilePhotoUrl ? (
+                                <img src={formData.profilePhotoUrl} alt="Profile" />
+                            ) : (
+                                <div className="photo-placeholder">No Photo</div>
+                            )}
+                        </div>
+                        
+                        {isEditing && (
+                            <div className="photo-actions">
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handlePhotoChange}
+                                    style={{ display: 'none' }}
+                                    id="photo-input"
+                                />
+                                <label htmlFor="photo-input" className="btn-upload">
+                                    Choose Photo
+                                </label>
+                                
+                                {photoFile && (
+                                    <button type="button" onClick={handlePhotoUpload} className="btn-save">
+                                        Upload Photo
+                                    </button>
+                                )}
+                                
+                                {formData.profilePhotoUrl && (
+                                    <button type="button" onClick={handlePhotoDelete} className="btn-delete">
+                                        Delete Photo
+                                    </button>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </section>
 
                 <section className="form-section">
                     <h2>Basic Information</h2>

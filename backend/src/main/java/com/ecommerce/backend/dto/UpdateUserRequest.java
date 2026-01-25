@@ -26,4 +26,8 @@ public class UpdateUserRequest {
     private String department;
     private String position;
     private String socialMediaContact;
+
+    private String profilePhotoUrl;
+    private String profilePhotoPublicId;
+
 }

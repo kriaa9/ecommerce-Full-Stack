@@ -26,4 +26,7 @@ public class UserResponse {
     private String department;
     private String position;
     private String socialMediaContact;
+
+    private String profilePhotoUrl;
+
 }

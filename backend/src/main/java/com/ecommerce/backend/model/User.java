@@ -52,9 +52,10 @@ public class User implements UserDetails {
     @Column(name = "last_name", nullable = false, length = 50)
     private String lastName;
 
+    
+
     @Enumerated(EnumType.STRING)
     private Gender gender;
-
 
     // --- Contact Info ---
     @NotBlank(message = "Email is required")
@@ -87,6 +88,13 @@ public class User implements UserDetails {
 
     @Column(name = "social_media_contact")
     private String socialMediaContact;
+
+    // --- Profile Photo ---
+    @Column(name = "profile_photo_url")
+    private String profilePhotoUrl; // Cloudinary URL
+
+    @Column(name = "profile_photo_public_id")
+    private String profilePhotoPublicId; // For deletion
 
     // --- Security ---
     @NotBlank(message = "Password is required")
@@ -129,14 +137,22 @@ public class User implements UserDetails {
     }
 
     @Override
-    public boolean isAccountNonExpired() { return true; }
+    public boolean isAccountNonExpired() {
+        return true;
+    }
 
     @Override
-    public boolean isAccountNonLocked() { return true; }
+    public boolean isAccountNonLocked() {
+        return true;
+    }
 
     @Override
-    public boolean isCredentialsNonExpired() { return true; }
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
 
     @Override
-    public boolean isEnabled() { return true; }
+    public boolean isEnabled() {
+        return true;
+    }
 }
