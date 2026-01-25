@@ -1,7 +1,6 @@
 package com.ecommerce.backend.service;
 
 import com.ecommerce.backend.dto.ProductRequest;
-import com.ecommerce.backend.dto.ProductResponse; // You can reuse/create a simple Response DTO
 import com.ecommerce.backend.model.Category;
 import com.ecommerce.backend.model.Product;
 import com.ecommerce.backend.model.User;

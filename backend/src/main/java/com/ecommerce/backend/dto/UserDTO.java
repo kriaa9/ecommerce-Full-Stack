@@ -1,6 +1,5 @@
 package com.ecommerce.backend.dto;
 
-import com.ecommerce.backend.model.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
