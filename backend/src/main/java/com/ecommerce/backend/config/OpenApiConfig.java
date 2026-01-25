@@ -10,36 +10,36 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.servers.Server;
 import org.springframework.context.annotation.Configuration;
 
-@Configuration
-@OpenAPIDefinition(
-        info = @Info(
-                contact = @Contact(
-                        name = "Ecommerce API",
-                        email = "support@ecommerce.com"
-                ),
-                description = "OpenAPI documentation for Ecommerce Backend",
-                title = "Ecommerce API",
-                version = "1.0"
-        ),
-        servers = {
-                @Server(
-                        description = "Local ENV",
-                        url = "http://localhost:8080"
+        @Configuration
+                @OpenAPIDefinition(
+                        info = @Info(
+                                contact = @Contact(
+                                        name = "Ecommerce API",
+                                        email = "support@ecommerce.com"
+                                ),
+                                description = "OpenAPI documentation for Ecommerce Backend",
+                                title = "Ecommerce API",
+                                version = "1.0"
+                        ),
+                        servers = {
+                                @Server(
+                                        description = "Local ENV",
+                                        url = "http://localhost:8080"
+                                )
+                        },
+                        security = {
+                                @SecurityRequirement(
+                                        name = "bearerAuth"
+                                )
+                        }
                 )
-        },
-        security = {
-                @SecurityRequirement(
-                        name = "bearerAuth"
+                @SecurityScheme(
+                        name = "bearerAuth",
+                        description = "JWT auth description",
+                        scheme = "bearer",
+                        type = SecuritySchemeType.HTTP,
+                        bearerFormat = "JWT",
+                        in = SecuritySchemeIn.HEADER
                 )
-        }
-)
-@SecurityScheme(
-        name = "bearerAuth",
-        description = "JWT auth description",
-        scheme = "bearer",
-        type = SecuritySchemeType.HTTP,
-        bearerFormat = "JWT",
-        in = SecuritySchemeIn.HEADER
-)
-public class OpenApiConfig {
+        public class OpenApiConfig {
 }
