@@ -3,6 +3,10 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate 
 import Login from './auth/login/Login';
 import Register from './auth/register/Register';
 import Profile from './profile/Profile';
+import AdminLayout from './admin/dashboard/AdminLayout';
+import AdminDashboard from './admin/dashboard/AdminDashboard';
+import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/AdminRoute';
 import authService from './api/authService'; // ✅ Import authService
 import './App.css';
 
@@ -89,7 +93,24 @@ function App() {
             <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/profile" element={<Profile />} />
+                <Route path="/profile" element={
+                    <ProtectedRoute>
+                        <Profile />
+                    </ProtectedRoute>
+                } />
+
+                {/* --- ADMIN ROUTES --- */}
+                <Route path="/admin" element={
+                    <AdminRoute>
+                        <AdminLayout />
+                    </AdminRoute>
+                }>
+                    <Route index element={<Navigate to="dashboard" replace />} />
+                    <Route path="dashboard" element={<AdminDashboard />} />
+                    {/* Placeholder for future admin sub-routes */}
+                    <Route path="categories" element={<div>Categories Page (Coming Soon)</div>} />
+                    <Route path="products" element={<div>Products Page (Coming Soon)</div>} />
+                </Route>
                 <Route
                     path="/"
                     element={

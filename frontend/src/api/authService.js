@@ -64,6 +64,38 @@ export const authService = {
   getToken: () => {
     return localStorage.getItem('token');
   },
+
+  /**
+   * Decode JWT and extract user role
+   * @returns {string|null} - Role like 'ROLE_ADMIN' or 'ROLE_USER'
+   */
+  getUserRole: () => {
+    const token = localStorage.getItem('token');
+    if (!token) return null;
+    
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      // Handle both 'role' and 'authorities' formats from Spring Security
+      if (payload.role) {
+        return payload.role;
+      }
+      if (payload.authorities && payload.authorities.length > 0) {
+        return payload.authorities[0].authority || payload.authorities[0];
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  },
+
+  /**
+   * Check if current user has admin role
+   * @returns {boolean}
+   */
+  isAdmin: () => {
+    const role = authService.getUserRole();
+    return role === 'ROLE_ADMIN' || role === 'ADMIN';
+  },
 };
 
 export default authService;

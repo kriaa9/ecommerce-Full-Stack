@@ -57,8 +57,13 @@ const Login = () => {
 
     try {
       await authService.login(formData);
-      // UPDATED: Redirects to the profile page instead of home
-      navigate('/profile');
+      
+      // Check if user is admin to determine redirect path
+      if (authService.isAdmin()) {
+        navigate('/admin/dashboard');
+      } else {
+        navigate('/profile');
+      }
     } catch (error) {
       const message =
           error.response?.data?.message ||
