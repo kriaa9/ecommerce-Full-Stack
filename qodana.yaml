@@ -51,3 +51,28 @@ include:
   - name: MapReplaceableByEnumMap
   - name: SetReplaceableByEnumSet
   - name: StringBufferMustHaveInitialCapacity
+  - name: DeprecatedClassUsageInspection
+  - name: XmlDeprecatedElement
+  - name: XmlDuplicatedId
+  - name: CheckTagEmptyBody
+  - name: CheckXmlFileWithXercesValidator
+  - name: XmlDefaultAttributeValue
+  - name: XmlUnboundNsPrefix
+  - name: XmlInvalidId
+  - name: CheckDtdRefs
+  - name: XmlPathReference
+  - name: XmlUnresolvedReference
+  - name: XmlWrongRootElement
+  - name: XmlHighlighting
+  - name: SpringDataJdbcAssociatedDbElementsInspection
+  - name: VoidMethodAnnotatedWithGET
+  - name: PathAnnotation
+  - name: RestWrongDefaultValueInspection
+  - name: WadlDomInspection
+  - name: MultipleMethodDesignatorsInspection
+  - name: UnresolvedRestParam
+  - name: VueDeprecatedSymbol
+  - name: VueDuplicateTag
+  - name: VueMissingComponentImportInspection
+  - name: VueUnrecognizedDirective
+  - name: VueUnrecognizedSlot
