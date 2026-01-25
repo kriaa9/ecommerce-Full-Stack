@@ -1,3 +1,6 @@
+####################################################################################################################
+# WARNING: Do not store sensitive information in this file, as its contents will be included in the Qodana report. #
+####################################################################################################################
 version: "1.0"
 linter: jetbrains/qodana-jvm:2025.2
 profile:
@@ -21,3 +24,30 @@ include:
   - name: MavenPropertyInParent
   - name: MavenNewElementsInOldSchema
   - name: MavenNewModelVersionInOldSchema
+  - name: InstanceofThis
+  - name: PublicMethodNotExposedInInterface
+  - name: BooleanParameter
+  - name: InstanceofChain
+  - name: ClassReferencesSubclass
+  - name: DeclareCollectionAsInterface
+  - name: FeatureEnvy
+  - name: MagicNumber
+  - name: MethodOnlyUsedFromInnerClass
+  - name: OverlyStrongTypeCast
+  - name: StaticMethodOnlyUsedInOneClass
+  - name: TypeMayBeWeakened
+  - name: UseOfConcreteClass
+  - name: AssertMessageNotString
+  - name: EqualsCalledOnEnumConstant
+  - name: SimplifiableIfStatement
+  - name: ObjectsEqualsCanBeSimplified
+  - name: OptionalToIf
+  - name: OptionalContainsCollection
+  - name: ReturnSeparatedFromComputation
+  - name: TryStatementWithMultipleResources
+  - name: ArrayCanBeReplacedWithEnumValues
+  - name: ArrayCreationWithoutNewKeyword
+  - name: ObjectEqualsCanBeEquality
+  - name: MapReplaceableByEnumMap
+  - name: SetReplaceableByEnumSet
+  - name: StringBufferMustHaveInitialCapacity
