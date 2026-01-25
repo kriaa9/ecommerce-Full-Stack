@@ -86,5 +86,44 @@ public class ProductService {
                 .orElseThrow(() -> new EntityNotFoundException("Product not found"));
     }
 
+    @Transactional
+    public Product updateProduct(Long id, ProductRequest request) {
+        Product product = getProductById(id);
+
+        // Update fields if they are not null
+        if (request.getName() != null) product.setName(request.getName());
+        if (request.getDescription() != null) product.setDescription(request.getDescription());
+        if (request.getPrice() != null) product.setPrice(request.getPrice());
+        if (request.getDiscountPrice() != null) product.setDiscountPrice(request.getDiscountPrice());
+        if (request.getStockQuantity() != null) product.setStockQuantity(request.getStockQuantity());
+        if (request.getActive() != null) product.setActive(request.getActive());
+
+        // Update Category if changed
+        if (request.getCategoryId() != null) {
+            Category category = categoryRepository.findById(request.getCategoryId())
+                    .orElseThrow(() -> new EntityNotFoundException("Category not found"));
+            product.setCategory(category);
+        }
+
+        return productRepository.save(product);
+    }
+
+    @Transactional
+    public void deleteProduct(Long id) throws IOException {
+        Product product = getProductById(id);
+
+        // 1. Delete images from Cloudinary to save space
+        if (product.getImageUrls() != null && !product.getImageUrls().isEmpty()) {
+            for (String url : product.getImageUrls()) {
+                // Helper to extract publicId from URL (you might need to store publicId in DB properly later)
+                // For now, we assume you might skip this or implement a parser
+                // cloudinaryService.deleteImage(extractPublicId(url));
+            }
+        }
+
+        // 2. Delete from DB
+        productRepository.delete(product);
+    }
+
 
 }

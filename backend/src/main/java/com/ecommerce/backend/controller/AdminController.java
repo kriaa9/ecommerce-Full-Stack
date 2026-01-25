@@ -1,7 +1,10 @@
 package com.ecommerce.backend.controller;
 
+import com.ecommerce.backend.dto.CategoryRequest;
 import com.ecommerce.backend.dto.ProductRequest;
+import com.ecommerce.backend.model.Category;
 import com.ecommerce.backend.model.Product;
+import com.ecommerce.backend.service.CategoryService;
 import com.ecommerce.backend.service.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -21,18 +24,58 @@ import java.util.List;
 public class AdminController {
 
     private final ProductService productService;
+    private final CategoryService categoryService;
 
-    // POST /api/v1/admin/products
-    // Consumes "multipart/form-data" because we are uploading files + data
+    // ================= CATEGORY OPERATIONS =================
+
+    @PostMapping("/categories")
+    public ResponseEntity<Category> createCategory(@RequestBody CategoryRequest request) {
+        return ResponseEntity.ok(categoryService.createCategory(request));
+    }
+
+    @GetMapping("/categories")
+    public ResponseEntity<List<Category>> getAllCategories() {
+        return ResponseEntity.ok(categoryService.getAllCategories());
+    }
+
+    @PutMapping("/categories/{id}")
+    public ResponseEntity<Category> updateCategory(@PathVariable Long id, @RequestBody CategoryRequest request) {
+        return ResponseEntity.ok(categoryService.updateCategory(id, request));
+    }
+
+    @DeleteMapping("/categories/{id}")
+    public ResponseEntity<Void> deleteCategory(@PathVariable Long id) {
+        categoryService.deleteCategory(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    // ================= PRODUCT OPERATIONS =================
     @PostMapping(value = "/products", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Product> createProduct(
-            @RequestPart("product") ProductRequest productRequest, // JSON Data
-            @RequestPart(value = "images", required = false) List<MultipartFile> images, // Files
+            @RequestPart("product") ProductRequest productRequest,
+            @RequestPart(value = "images", required = false) List<MultipartFile> images,
             Principal principal
     ) {
         try {
-            Product createdProduct = productService.createProduct(productRequest, images, principal);
-            return ResponseEntity.ok(createdProduct);
+            return ResponseEntity.ok(productService.createProduct(productRequest, images, principal));
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @PutMapping("/products/{id}")
+    public ResponseEntity<Product> updateProduct(
+            @PathVariable Long id,
+            @RequestBody ProductRequest productRequest
+    ) {
+        return ResponseEntity.ok(productService.updateProduct(id, productRequest));
+    }
+
+    @DeleteMapping("/products/{id}")
+    public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
+        try {
+            productService.deleteProduct(id);
+            return ResponseEntity.noContent().build();
         } catch (IOException e) {
             return ResponseEntity.internalServerError().build();
         }
