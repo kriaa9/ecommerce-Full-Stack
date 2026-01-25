@@ -1,5 +1,5 @@
 import { useState } from 'react'; // Import hooks
-import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import Login from './auth/login/Login';
 import Register from './auth/register/Register';
 import Profile from './profile/Profile';
