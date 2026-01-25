@@ -1,7 +1,7 @@
 services:
   # --- Database Service ---
   postgres:
-    image: postgres:15-alpine
+    image: postgres:16-alpine
     container_name: ecommerce-db
     environment:
       POSTGRES_DB: ecommerce

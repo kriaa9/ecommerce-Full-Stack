@@ -19,6 +19,9 @@ RUN npm run build
 # Stage 2: Production with Nginx
 FROM nginx:alpine AS runtime
 
+# Patch system libraries for security
+RUN apk update && apk upgrade && rm -rf /var/cache/apk/*
+
 # Remove default nginx config
 RUN rm /etc/nginx/conf.d/default.conf
 
