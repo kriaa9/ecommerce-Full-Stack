@@ -81,7 +81,11 @@ export const adminService = {
    * @returns {Promise<Object>} Updated product
    */
   updateProduct: async (id, productData) => {
-    const response = await api.put(`${ENDPOINTS.PRODUCTS}/${id}`, productData);
+    // Determine content type based on data type (FormData vs Object)
+    const isFormData = productData instanceof FormData;
+    const response = await api.put(`${ENDPOINTS.PRODUCTS}/${id}`, productData, {
+      headers: isFormData ? { 'Content-Type': 'multipart/form-data' } : { 'Content-Type': 'application/json' },
+    });
     return response.data;
   },
 

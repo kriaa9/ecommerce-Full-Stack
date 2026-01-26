@@ -1,4 +1,4 @@
-import { Outlet } from 'react-router-dom';
+import {Outlet} from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import './AdminLayout.css';
 
@@ -8,14 +8,14 @@ import './AdminLayout.css';
  * Uses Outlet for nested route rendering
  */
 const AdminLayout = () => {
-  return (
-    <div className="admin-layout">
-      <Sidebar />
-      <main className="admin-content">
-        <Outlet />
-      </main>
-    </div>
-  );
+    return (
+        <div className="admin-layout">
+            <Sidebar/>
+            <main className="admin-content">
+                <Outlet/>
+            </main>
+        </div>
+    );
 };
 
 export default AdminLayout;

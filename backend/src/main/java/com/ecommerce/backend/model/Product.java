@@ -22,6 +22,7 @@ import java.util.List;
 @Table(name = "products", uniqueConstraints = {
         @UniqueConstraint(columnNames = "sku")
 })
+// Fixes "LazyInitializationException" when sending JSON to frontend
 @com.fasterxml.jackson.annotation.JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Product {
 
@@ -39,9 +40,9 @@ public class Product {
 
     @NotBlank(message = "SKU is required")
     @Column(nullable = false, unique = true)
-    private String sku; // Stock Keeping Unit (e.g., "NIKE-AIR-001")
+    private String sku;
 
-    // --- Pricing (Use BigDecimal for money) ---
+    // --- Pricing ---
     @NotNull(message = "Price is required")
     @DecimalMin(value = "0.0", inclusive = false, message = "Price must be greater than 0")
     @Column(nullable = false, precision = 10, scale = 2)
@@ -58,23 +59,19 @@ public class Product {
 
     @Column(name = "is_active")
     @Builder.Default
-    private Boolean active = true; // Admin can toggle visibility
+    private Boolean active = true;
 
-    // --- Media (Cloudinary) ---
-    // Stores a list of image URLs in a separate table "product_images"
-    @ElementCollection
+    // --- Media ---
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "product_images", joinColumns = @JoinColumn(name = "product_id"))
     @Column(name = "image_url")
     private List<String> imageUrls;
 
     // --- Relationships ---
-
-    // Many Products belong to One Category
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    // Track which Admin created/updated this product
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "created_by_user_id")
     private User createdBy;

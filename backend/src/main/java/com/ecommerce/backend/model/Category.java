@@ -29,12 +29,9 @@ public class Category {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    // Optional: Cloudinary URL for category thumbnail
     private String imageUrl;
 
-    // One Category has many Products
-    // "mappedBy" refers to the 'category' field in the Product class
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    @com.fasterxml.jackson.annotation.JsonIgnore
+    @com.fasterxml.jackson.annotation.JsonIgnore // Prevents infinite loops
     private List<Product> products;
 }

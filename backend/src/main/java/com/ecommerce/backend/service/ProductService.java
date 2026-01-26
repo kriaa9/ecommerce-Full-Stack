@@ -20,6 +20,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,23 +32,38 @@ public class ProductService {
     private final UserRepository userRepository;
     private final CloudinaryService cloudinaryService;
 
-    @Transactional
-    public Product createProduct(ProductRequest request, List<MultipartFile> images, Principal principal) throws IOException {
+    // --- READ OPERATIONS ---
 
-        // 1. Validate SKU uniqueness
+    public List<Product> getAllProducts() {
+        // We filter stream to return ONLY active products to the frontend
+        return productRepository.findAll().stream()
+                .filter(product -> Boolean.TRUE.equals(product.getActive()))
+                .collect(Collectors.toList());
+    }
+
+    public Product getProductById(Long id) {
+        return productRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found with ID: " + id));
+    }
+
+    // --- WRITE OPERATIONS (Admin) ---
+
+    @Transactional
+    public Product createProduct(ProductRequest request, List<MultipartFile> images, Principal principal)
+            throws IOException {
+
         if (productRepository.existsBySku(request.getSku())) {
             throw new IllegalArgumentException("Product with SKU " + request.getSku() + " already exists");
         }
 
-        // 2. Fetch Category
         Category category = categoryRepository.findById(request.getCategoryId())
-                .orElseThrow(() -> new EntityNotFoundException("Category not found with ID: " + request.getCategoryId()));
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Category not found with ID: " + request.getCategoryId()));
 
-        // 3. Fetch Admin User (Created By)
         User admin = userRepository.findByEmail(principal.getName())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-        // 4. Upload Images to Cloudinary (if any)
+        log.info("Creating product: {} with {} images", request.getName(), (images != null ? images.size() : 0));
         List<String> imageUrls = new ArrayList<>();
         if (images != null && !images.isEmpty()) {
             for (MultipartFile file : images) {
@@ -58,7 +74,6 @@ public class ProductService {
             }
         }
 
-        // 5. Build Product Entity
         Product product = Product.builder()
                 .name(request.getName())
                 .description(request.getDescription())
@@ -72,36 +87,44 @@ public class ProductService {
                 .imageUrls(imageUrls)
                 .build();
 
-        // 6. Save to DB
         return productRepository.save(product);
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
-    }
-
-    public Product getProductById(Long id) {
-        return productRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
-    }
-
     @Transactional
-    public Product updateProduct(Long id, ProductRequest request) {
+    public Product updateProduct(Long id, ProductRequest request, List<MultipartFile> images) throws IOException {
         Product product = getProductById(id);
 
-        // Update fields if they are not null
-        if (request.getName() != null) product.setName(request.getName());
-        if (request.getDescription() != null) product.setDescription(request.getDescription());
-        if (request.getPrice() != null) product.setPrice(request.getPrice());
-        if (request.getDiscountPrice() != null) product.setDiscountPrice(request.getDiscountPrice());
-        if (request.getStockQuantity() != null) product.setStockQuantity(request.getStockQuantity());
-        if (request.getActive() != null) product.setActive(request.getActive());
+        if (request.getName() != null)
+            product.setName(request.getName());
+        if (request.getDescription() != null)
+            product.setDescription(request.getDescription());
+        if (request.getPrice() != null)
+            product.setPrice(request.getPrice());
+        if (request.getDiscountPrice() != null)
+            product.setDiscountPrice(request.getDiscountPrice());
+        if (request.getStockQuantity() != null)
+            product.setStockQuantity(request.getStockQuantity());
+        if (request.getActive() != null)
+            product.setActive(request.getActive());
 
-        // Update Category if changed
         if (request.getCategoryId() != null) {
             Category category = categoryRepository.findById(request.getCategoryId())
                     .orElseThrow(() -> new EntityNotFoundException("Category not found"));
             product.setCategory(category);
+        }
+
+        // Handle new images if provided
+        if (images != null && !images.isEmpty()) {
+            List<String> newImageUrls = new ArrayList<>();
+            for (MultipartFile file : images) {
+                if (!file.isEmpty()) {
+                    Map<String, String> uploadResult = cloudinaryService.uploadImage(file, "products");
+                    newImageUrls.add(uploadResult.get("url"));
+                }
+            }
+            if (!newImageUrls.isEmpty()) {
+                product.setImageUrls(newImageUrls);
+            }
         }
 
         return productRepository.save(product);
@@ -110,19 +133,7 @@ public class ProductService {
     @Transactional
     public void deleteProduct(Long id) throws IOException {
         Product product = getProductById(id);
-
-        // 1. Delete images from Cloudinary to save space
-        if (product.getImageUrls() != null && !product.getImageUrls().isEmpty()) {
-            for (String url : product.getImageUrls()) {
-                // Helper to extract publicId from URL (you might need to store publicId in DB properly later)
-                // For now, we assume you might skip this or implement a parser
-                // cloudinaryService.deleteImage(extractPublicId(url));
-            }
-        }
-
-        // 2. Delete from DB
+        // Note: You can implement Cloudinary deletion logic here later
         productRepository.delete(product);
     }
-
-
 }

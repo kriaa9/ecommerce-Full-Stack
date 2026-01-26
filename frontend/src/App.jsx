@@ -1,5 +1,5 @@
-import { useState } from 'react'; // Import hooks
-import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
+import {useState} from 'react'; // Import hooks
+import {BrowserRouter as Router, Link, Navigate, Route, Routes, useLocation, useNavigate} from 'react-router-dom';
 import Login from './auth/login/Login';
 import Register from './auth/register/Register';
 import Profile from './profile/Profile';
@@ -9,9 +9,10 @@ import CategoryList from './admin/categories/CategoryList';
 import CategoryForm from './admin/categories/CategoryForm';
 import ProductList from './admin/products/ProductList';
 import ProductForm from './admin/products/ProductForm';
+import ProductCatalog from './catalog/ProductCatalog';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
-import authService from './api/authService'; // ✅ Import authService
+import authService from './api/authService';
 import './App.css';
 
 // Separate Navigation Component
@@ -50,9 +51,10 @@ function Navigation() {
                                 className="user-avatar-btn"
                                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                             >
-                                <div className="avatar-circle">U</div> {/* Placeholder Initial */}
+                                <div className="avatar-circle">U</div>
+                                {/* Placeholder Initial */}
                                 <span className="user-name">My Account</span>
-                                <span style={{ fontSize: '10px' }}>▼</span>
+                                <span style={{fontSize: '10px'}}>▼</span>
                             </button>
 
                             {isDropdownOpen && (
@@ -93,35 +95,38 @@ function Navigation() {
 function App() {
     return (
         <Router>
-            <Navigation />
+            <Navigation/>
             <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
+                <Route path="/login" element={<Login/>}/>
+                <Route path="/register" element={<Register/>}/>
                 <Route path="/profile" element={
                     <ProtectedRoute>
-                        <Profile />
+                        <Profile/>
                     </ProtectedRoute>
-                } />
+                }/>
 
                 {/* --- ADMIN ROUTES --- */}
                 <Route path="/admin" element={
                     <AdminRoute>
-                        <AdminLayout />
+                        <AdminLayout/>
                     </AdminRoute>
                 }>
-                    <Route index element={<Navigate to="dashboard" replace />} />
-                    <Route path="dashboard" element={<AdminDashboard />} />
-                    <Route path="categories" element={<CategoryList />} />
-                    <Route path="categories/new" element={<CategoryForm />} />
-                    <Route path="categories/:id/edit" element={<CategoryForm />} />
-                    <Route path="products" element={<ProductList />} />
-                    <Route path="products/new" element={<ProductForm />} />
-                    <Route path="products/:id/edit" element={<ProductForm />} />
+                    <Route index element={<Navigate to="dashboard" replace/>}/>
+                    <Route path="dashboard" element={<AdminDashboard/>}/>
+                    <Route path="categories" element={<CategoryList/>}/>
+                    <Route path="categories/new" element={<CategoryForm/>}/>
+                    <Route path="categories/:id/edit" element={<CategoryForm/>}/>
+                    <Route path="products" element={<ProductList/>}/>
+                    <Route path="products/new" element={<ProductForm/>}/>
+                    <Route path="products/:id/edit" element={<ProductForm/>}/>
                 </Route>
+
+                <Route path="/products" element={<ProductCatalog/>}/>
+
                 <Route
                     path="/"
                     element={
-                        <div className="home-container" style={{ padding: '2rem', textAlign: 'center' }}>
+                        <div className="home-container" style={{padding: '2rem', textAlign: 'center'}}>
                             <h1>Welcome to E-Shop</h1>
                             <p>Your premium shopping destination.</p>
                         </div>
