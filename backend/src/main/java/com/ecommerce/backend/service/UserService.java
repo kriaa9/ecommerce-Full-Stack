@@ -7,6 +7,7 @@ import com.ecommerce.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -51,9 +52,9 @@ public class UserService {
         User user = getUserByPrincipal(principal);
 
         // --- 1. Update Basic Info ---
-        if (request.getFirstName() != null)
+        if (StringUtils.hasText(request.getFirstName()))
             user.setFirstName(request.getFirstName());
-        if (request.getLastName() != null)
+        if (StringUtils.hasText(request.getLastName()))
             user.setLastName(request.getLastName());
         if (request.getGender() != null)
             user.setGender(request.getGender());

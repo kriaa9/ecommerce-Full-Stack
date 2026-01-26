@@ -47,7 +47,7 @@ class AuthenticationServiceTest {
 
         when(userRepository.existsByEmail(request.getEmail())).thenReturn(false);
         when(passwordEncoder.encode(any())).thenReturn("encodedPassword");
-        when(jwtService.generateToken(any())).thenReturn("jwtToken");
+        when(jwtService.generateToken(any(), any())).thenReturn("jwtToken");
 
         AuthenticationResponse response = authenticationService.register(request);
 
@@ -85,7 +85,7 @@ class AuthenticationServiceTest {
                 .build();
 
         when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(user));
-        when(jwtService.generateToken(user)).thenReturn("jwtToken");
+        when(jwtService.generateToken(any(), eq(user))).thenReturn("jwtToken");
 
         AuthenticationResponse response = authenticationService.authenticate(request);
 
