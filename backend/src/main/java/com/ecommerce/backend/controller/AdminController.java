@@ -26,6 +26,11 @@ public class AdminController {
     private final ProductService productService;
     private final CategoryService categoryService;
 
+    @GetMapping("/stats")
+    public ResponseEntity<com.ecommerce.backend.dto.DashboardStatsResponse> getStats() {
+        return ResponseEntity.ok(productService.getDashboardStats());
+    }
+
     // ================= CATEGORY OPERATIONS =================
 
     @PostMapping("/categories")

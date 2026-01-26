@@ -140,4 +140,20 @@ public class ProductService {
         // Note: You can implement Cloudinary deletion logic here later
         productRepository.delete(product);
     }
+
+    public com.ecommerce.backend.dto.DashboardStatsResponse getDashboardStats() {
+        List<Product> products = productRepository.findAll();
+        long totalCategories = categoryRepository.count();
+
+        java.math.BigDecimal totalValue = products.stream()
+                .map(product -> product.getPrice().multiply(java.math.BigDecimal.valueOf(product.getStockQuantity())))
+                .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+
+        return com.ecommerce.backend.dto.DashboardStatsResponse.builder()
+                .totalProducts(products.size())
+                .totalCategories(totalCategories)
+                .totalInventoryValue(totalValue)
+                .totalOrders(0)
+                .build();
+    }
 }

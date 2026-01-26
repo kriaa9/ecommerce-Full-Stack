@@ -3,9 +3,19 @@ import api from './axios';
 const ENDPOINTS = {
   CATEGORIES: '/api/v1/admin/categories',
   PRODUCTS: '/api/v1/admin/products',
+  STATS: '/api/v1/admin/stats',
 };
 
 export const adminService = {
+  /**
+   * Get dashboard statistics
+   * @returns {Promise<Object>} { totalProducts, totalCategories, totalInventoryValue, totalOrders }
+   */
+  getStats: async () => {
+    const response = await api.get(ENDPOINTS.STATS);
+    return response.data;
+  },
+
   // =====================
   // CATEGORY MANAGEMENT
   // =====================
