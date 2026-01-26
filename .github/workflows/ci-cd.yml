@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, dev ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, dev ]
 
 jobs:
   backend-ci:
@@ -18,6 +18,10 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
+
+      - name: Make mvnw executable
+        working-directory: ./backend
+        run: chmod +x mvnw
 
       - name: Build and Test Backend
         working-directory: ./backend
