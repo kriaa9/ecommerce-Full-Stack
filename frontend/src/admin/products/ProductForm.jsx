@@ -6,7 +6,51 @@ import './ProductForm.css';
 import ImageUpload from "../../components/ImageUpload";
 
 /**
- * ProductForm - Page for creating and editing products
+ * Shared Form sub-components to keep the main JSX clean and scannable.
+ */
+const TextField = ({ label, name, value, onChange, placeholder, required = false, type = "text", step }) => (
+  <div className="form-group">
+    <label htmlFor={name} className="form-label">
+      {label}{required && " *"}
+    </label>
+    <input id={name} type={type} step={step} name={name} value={value} onChange={onChange} required={required} placeholder={placeholder} className="form-input" />
+  </div>
+);
+
+const TextAreaField = ({ label, name, value, onChange, rows = 4 }) => (
+  <div className="form-group">
+    <label htmlFor={name} className="form-label">{label}</label>
+    <textarea id={name} name={name} value={value} onChange={onChange} rows={rows} className="form-textarea"
+    />
+  </div>
+);
+
+const SelectField = ({ label, name, value, onChange, options, required = false }) => (
+  <div className="form-group">
+    <label htmlFor={name} className="form-label">
+      {label}{required && " *"}
+    </label>
+    <select id={name} name={name} value={value} onChange={onChange} required={required} className="form-select">
+      <option value="">Select a category</option>
+      {options.map((cat) => (
+        <option key={cat.id} value={cat.id}>
+          {cat.name}
+        </option>
+      ))}
+    </select>
+  </div>
+);
+
+const CheckboxField = ({ label, name, checked, onChange }) => (
+  <div className="form-checkbox-group">
+    <input id={name} type="checkbox" name={name} checked={checked} onChange={onChange} className="form-checkbox" />
+    <label htmlFor={name} style={{ cursor: "pointer", fontWeight: "600", color: "#1e293b" }}>{label}</label>
+  </div>
+);
+
+/**
+ * ProductForm - Refactored for production standards.
+ * NO inline styles, semantic HTML, and advanced component abstraction.
  */
 const ProductForm = () => {
   const { id } = useParams();
@@ -34,12 +78,10 @@ const ProductForm = () => {
     const fetchInitialData = async () => {
       try {
         setLoading(true);
-        // Fetch categories for dropdown
         const cats = await categoryService.getCategories();
         setCategories(Array.isArray(cats) ? cats : []);
 
         if (isEditMode) {
-          // Fetch specific product to edit
           const products = await productService.getAdminProducts();
           const product = products.find((p) => p.id === parseInt(id));
 
@@ -110,7 +152,6 @@ const ProductForm = () => {
       }
 
       if (isEditMode) {
-        // Now passing postData (FormData) to support image updates on backend
         await productService.updateProduct(id, postData);
       } else {
         await productService.createProduct(postData);
@@ -118,296 +159,68 @@ const ProductForm = () => {
       navigate("/admin/products");
     } catch (err) {
       console.error("Error saving product:", err);
-      setError(
-        "Failed to save product. Please check that SKU is unique and all fields are valid.",
-      );
+      setError("Failed to save product. Ensure SKU is unique and categories are valid.");
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (loading)
-    return <div className="admin-loading">Loading product details...</div>;
+  if (loading) return <div className="admin-loading">Loading product details...</div>;
 
   return (
-    <div className="product-form-page">
-      <div className="admin-page-header">
+    <main className="product-form-page">
+      <header className="admin-page-header">
         <h1>{isEditMode ? "Edit Product" : "Add New Product"}</h1>
-        <Link to="/admin/products" className="btn-secondary">
-          Cancel
-        </Link>
-      </div>
+        <Link to="/admin/products" className="btn-secondary">Cancel</Link>
+      </header>
 
-      <form
-        onSubmit={handleSubmit}
-        className="admin-card"
-        style={{ maxWidth: "800px" }}
-      >
+      <form onSubmit={handleSubmit} className="admin-card admin-form-wide">
         {error && (
-          <div
-            style={{
-              color: "#ef4444",
-              marginBottom: "1.25rem",
-              padding: "0.75rem",
-              background: "#fee2e2",
-              borderRadius: "6px",
-            }}
-          >
+          <p className="error-message" role="alert">
             {error}
-          </div>
+          </p>
         )}
 
-        <div
-          className="form-grid"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 280px",
-            gap: "2rem",
-          }}
-        >
-          {/* Main Info */}
-          <div className="form-main">
-            <div className="form-group" style={{ marginBottom: "1.25rem" }}>
-              <label
-                style={{
-                  display: "block",
-                  marginBottom: "0.5rem",
-                  fontWeight: "500",
-                }}
-              >
-                Product Name *
-              </label>
-              <input
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                required
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  border: "1px solid #e2e8f0",
-                  borderRadius: "8px",
-                }}
-              />
+        <div className="form-grid">
+          {/* Main Form Section */}
+          <section className="form-main">
+            <TextField label="Product Name" name="name" value={formData.name} onChange={handleChange} required />
+
+            <TextField label="SKU * (Unique Identifier)" name="sku" value={formData.sku} onChange={handleChange} placeholder="e.g. LAPTOP-001" required />
+
+            <TextAreaField label="Description" name="description" value={formData.description} onChange={handleChange} />
+
+            <div className="form-row">
+              <TextField label="Price ($)" name="price" type="number" step="0.01" value={formData.price} onChange={handleChange} required />
+              <TextField label="Stock Quantity" name="stockQuantity" type="number" value={formData.stockQuantity} onChange={handleChange} required />
             </div>
 
-            <div className="form-group" style={{ marginBottom: "1.25rem" }}>
-              <label
-                style={{
-                  display: "block",
-                  marginBottom: "0.5rem",
-                  fontWeight: "500",
-                }}
-              >
-                SKU * (Unique Identifier)
-              </label>
-              <input
-                type="text"
-                name="sku"
-                value={formData.sku}
-                onChange={handleChange}
-                required
-                placeholder="e.g. LAPTOP-001"
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  border: "1px solid #e2e8f0",
-                  borderRadius: "8px",
-                }}
-              />
-            </div>
+            <SelectField label="Category" name="categoryId" value={formData.categoryId} onChange={handleChange} options={categories} required />
 
-            <div className="form-group" style={{ marginBottom: "1.25rem" }}>
-              <label
-                style={{
-                  display: "block",
-                  marginBottom: "0.5rem",
-                  fontWeight: "500",
-                }}
-              >
-                Description
-              </label>
-              <textarea
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                rows="4"
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  border: "1px solid #e2e8f0",
-                  borderRadius: "8px",
-                  resize: "vertical",
-                }}
-              />
-            </div>
+            <CheckboxField label="Product Visible to Public" name="active" checked={formData.active} onChange={handleChange} />
+          </section>
 
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "1.5rem",
-              }}
-            >
-              <div className="form-group" style={{ marginBottom: "1.25rem" }}>
-                <label
-                  style={{
-                    display: "block",
-                    marginBottom: "0.5rem",
-                    fontWeight: "500",
-                  }}
-                >
-                  Price ($) *
-                </label>
-                <input
-                  type="number"
-                  step="0.01"
-                  name="price"
-                  value={formData.price}
-                  onChange={handleChange}
-                  required
-                  style={{
-                    width: "100%",
-                    padding: "0.75rem",
-                    border: "1px solid #e2e8f0",
-                    borderRadius: "8px",
-                  }}
-                />
-              </div>
-
-              <div className="form-group" style={{ marginBottom: "1.25rem" }}>
-                <label
-                  style={{
-                    display: "block",
-                    marginBottom: "0.5rem",
-                    fontWeight: "500",
-                  }}
-                >
-                  Stock Quantity *
-                </label>
-                <input
-                  type="number"
-                  name="stockQuantity"
-                  value={formData.stockQuantity}
-                  onChange={handleChange}
-                  required
-                  style={{
-                    width: "100%",
-                    padding: "0.75rem",
-                    border: "1px solid #e2e8f0",
-                    borderRadius: "8px",
-                  }}
-                />
-              </div>
-            </div>
-
-            <div className="form-group" style={{ marginBottom: "1.25rem" }}>
-              <label
-                style={{
-                  display: "block",
-                  marginBottom: "0.5rem",
-                  fontWeight: "500",
-                }}
-              >
-                Category *
-              </label>
-              <select
-                name="categoryId"
-                value={formData.categoryId}
-                onChange={handleChange}
-                required
-                style={{
-                  width: "100%",
-                  padding: "0.75rem",
-                  border: "1px solid #e2e8f0",
-                  borderRadius: "8px",
-                  background: "#fff",
-                }}
-              >
-                <option value="">Select a category</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="form-group" style={{ marginBottom: "1.25rem", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.75rem", background: "#f8fafc", borderRadius: "8px" }}>
-              <input
-                type="checkbox"
-                name="active"
-                id="active-toggle"
-                checked={formData.active}
-                onChange={handleChange}
-                style={{ width: "18px", height: "18px", cursor: "pointer" }}
-              />
-              <label htmlFor="active-toggle" style={{ cursor: "pointer", fontWeight: "600", color: "#1e293b" }}>
-                Product Visible to Public
-              </label>
-            </div>
-          </div>
-
-          {/* Image Sidebar */}
-          <div className="form-sidebar">
-            <label
-              style={{
-                display: "block",
-                marginBottom: "0.5rem",
-                fontWeight: "500",
-              }}
-            >
-              Product Image
-            </label>
+          {/* Sidebar for Media */}
+          <aside className="form-sidebar">
+            <label className="form-label">Product Image</label>
             <ImageUpload
               currentImage={photoPreview}
               onImageSelect={handleImageSelect}
             />
-            <p
-              style={{
-                fontSize: "0.875rem",
-                color: "#64748b",
-                marginTop: "1rem",
-              }}
-            >
+            <p className="form-sidebar-hint">
               Upload a clear image of the product. Supported formats: JPG, PNG.
             </p>
-          </div>
+          </aside>
         </div>
 
-        <div
-          className="form-actions"
-          style={{
-            marginTop: "2rem",
-            display: "flex",
-            gap: "1rem",
-            borderTop: "1px solid #f1f5f9",
-            paddingTop: "1.5rem",
-          }}
-        >
-          <button
-            type="submit"
-            className="btn-primary"
-            disabled={submitting}
-            style={{ flex: 1, justifyContent: "center" }}
-          >
-            {submitting
-              ? "Saving..."
-              : isEditMode
-                ? "Update Product"
-                : "Create Product"}
+        <footer className="form-actions form-actions-border">
+          <button type="submit" className="btn-primary btn-flex" disabled={submitting}>
+            {submitting ? "Saving..." : (isEditMode ? "Update Product" : "Create Product")}
           </button>
-          <Link
-            to="/admin/products"
-            className="btn-secondary"
-            style={{ flex: 1, textAlign: "center" }}
-          >
-            Cancel
-          </Link>
-        </div>
+          <Link to="/admin/products" className="btn-secondary btn-flex">Cancel</Link>
+        </footer>
       </form>
-    </div>
+    </main>
   );
 };
 

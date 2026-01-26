@@ -3,7 +3,47 @@ import {Link, useNavigate, useParams} from 'react-router-dom';
 import categoryService from '../../api/categoryService';
 
 /**
- * CategoryForm - Reusable form for creating and editing categories
+ * Shared Form Field sub-components for a cleaner main JSX
+ */
+const FormField = ({ label, name, value, onChange, placeholder, required = false }) => (
+    <div className="form-group">
+        <label htmlFor={name} className="form-label">
+            {label}{required && ' *'}
+        </label>
+        <input
+            id={name}
+            type="text"
+            name={name}
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+            required={required}
+            className="form-input"
+            aria-required={required}
+        />
+    </div>
+);
+
+const TextAreaField = ({ label, name, value, onChange, placeholder, rows = 4 }) => (
+    <div className="form-group">
+        <label htmlFor={name} className="form-label">
+            {label}
+        </label>
+        <textarea
+            id={name}
+            name={name}
+            value={value}
+            onChange={onChange}
+            placeholder={placeholder}
+            rows={rows}
+            className="form-textarea"
+        />
+    </div>
+);
+
+/**
+ * CategoryForm - Reusable form for creating and editing categories.
+ * Refactored for production standards: NO inline styles, semantic HTML, and component abstraction.
  */
 const CategoryForm = () => {
     const {id} = useParams();
@@ -77,76 +117,54 @@ const CategoryForm = () => {
     if (loading) return <div className="admin-loading">Loading category data...</div>;
 
     return (
-        <div className="category-form-page">
-            <div className="admin-page-header">
+        <main className="category-form-page">
+            <header className="admin-page-header">
                 <h1>{isEditMode ? 'Edit Category' : 'Add New Category'}</h1>
                 <Link to="/admin/categories" className="btn-secondary">
                     Cancel
                 </Link>
-            </div>
+            </header>
 
-            <div className="admin-card" style={{maxWidth: '600px'}}>
-                {error && <div style={{color: '#ef4444', marginBottom: '1rem'}}>{error}</div>}
+            <article className="admin-card admin-form-card">
+                {error && (
+                    <p className="error-message" role="alert">
+                        {error}
+                    </p>
+                )}
 
                 <form onSubmit={handleSubmit}>
-                    <div className="form-group" style={{marginBottom: '1.5rem'}}>
-                        <label style={{display: 'block', marginBottom: '0.5rem', fontWeight: '500'}}>
-                            Category Name *
-                        </label>
-                        <input
-                            type="text"
-                            name="name"
-                            value={formData.name}
-                            onChange={handleChange}
-                            placeholder="e.g. Electronics"
-                            required
-                            style={{
-                                width: '100%',
-                                padding: '0.75rem',
-                                border: '1px solid #e2e8f0',
-                                borderRadius: '8px',
-                                fontSize: '1rem'
-                            }}
-                        />
-                    </div>
+                    <FormField
+                        label="Category Name"
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        placeholder="e.g. Electronics"
+                        required
+                    />
 
-                    <div className="form-group" style={{marginBottom: '2rem'}}>
-                        <label style={{display: 'block', marginBottom: '0.5rem', fontWeight: '500'}}>
-                            Description
-                        </label>
-                        <textarea
-                            name="description"
-                            value={formData.description}
-                            onChange={handleChange}
-                            placeholder="Brief description of this category..."
-                            rows="4"
-                            style={{
-                                width: '100%',
-                                padding: '0.75rem',
-                                border: '1px solid #e2e8f0',
-                                borderRadius: '8px',
-                                fontSize: '1rem',
-                                resize: 'vertical'
-                            }}
-                        />
-                    </div>
+                    <TextAreaField
+                        label="Description"
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
+                        placeholder="Brief description of this category..."
+                    />
 
-                    <div className="form-actions" style={{display: 'flex', gap: '1rem'}}>
+                    <footer className="form-actions">
                         <button
                             type="submit"
-                            className="btn-primary"
+                            className="btn-primary btn-flex"
                             disabled={submitting}
-                            style={{flex: 1, justifyContent: 'center'}}
                         >
                             {submitting ? 'Saving...' : (isEditMode ? 'Update Category' : 'Create Category')}
                         </button>
-                        <Link to="/admin/categories" className="btn-secondary" style={{flex: 1, textAlign: 'center'}}>
+                        <Link to="/admin/categories" className="btn-secondary btn-flex">
                             Cancel
                         </Link>
-                    </div>
+                    </footer>
                 </form>
-            </div>
-        </div>
+            </article>
+        </main>
     );
 };
 
