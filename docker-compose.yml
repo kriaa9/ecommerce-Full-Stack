@@ -78,6 +78,7 @@ services:
     container_name: ecommerce-grafana
     volumes:
       - ./grafana/provisioning:/etc/grafana/provisioning
+      - grafana_data:/var/lib/grafana
     ports:
       - "3000:3000"
     environment:
@@ -101,7 +102,7 @@ services:
     container_name: ecommerce-promtail
     volumes:
       - ./promtail-config.yml:/etc/promtail/config.yml
-      - /var/run/docker.sock:/var/run/docker.sock
+      - //var/run/docker.sock:/var/run/docker.sock
     command: -config.file=/etc/promtail/config.yml
     networks:
       - ecommerce-network
@@ -109,6 +110,7 @@ services:
 # --- Volumes & Networks ---
 volumes:
   postgres_data: # Persist DB data even if you delete containers
+  grafana_data: # Persist Grafana dashboards and settings
 
 networks:
   ecommerce-network:
