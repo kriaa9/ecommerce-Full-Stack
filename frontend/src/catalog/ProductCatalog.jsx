@@ -88,46 +88,22 @@ const ProductCatalog = () => {
         <div className="sidebar-section">
           <h3>Search</h3>
           <div className="search-box">
-            <input 
-              type="text" 
-              placeholder="Search products..." 
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
+            <input type="text" placeholder="Search products..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)}/>
           </div>
         </div>
 
         <div className="sidebar-section">
           <h3>Categories</h3>
           <ul className="category-list">
-            <li 
-              className={selectedCategory === 'all' ? 'active' : ''} 
-              onClick={() => setSelectedCategory('all')}
-            >
-              All Products
-            </li>
-            {categories.map(cat => (
-              <li 
-                key={cat.id} 
-                className={selectedCategory === cat.id.toString() ? 'active' : ''} 
-                onClick={() => setSelectedCategory(cat.id.toString())}
-              >
-                {cat.name}
-              </li>
-            ))}
+            <li className={selectedCategory === 'all' ? 'active' : ''} onClick={() => setSelectedCategory('all')}>All Products</li>
+            {categories.map(cat => <li key={cat.id} className={selectedCategory === cat.id.toString() ? 'active' : ''} onClick={() => setSelectedCategory(cat.id.toString())}>{cat.name}</li>)}
           </ul>
         </div>
 
         <div className="sidebar-section">
           <h3>Price Range</h3>
           <div className="price-filter">
-            <input 
-              type="range" 
-              min="0" 
-              max="2000" 
-              value={priceRange.max} 
-              onChange={(e) => setPriceRange({ ...priceRange, max: parseInt(e.target.value) })}
-            />
+            <input type="range" min="0" max="2000" value={priceRange.max} onChange={(e) => setPriceRange({ ...priceRange, max: parseInt(e.target.value) })}/>
             <div className="price-labels">
               <span>$0</span>
               <span>${priceRange.max}</span>
@@ -135,14 +111,7 @@ const ProductCatalog = () => {
           </div>
         </div>
 
-        <button 
-          className="btn-text-reset" 
-          onClick={() => {
-            setSelectedCategory('all');
-            setSearchTerm('');
-            setPriceRange({ min: 0, max: 2000 });
-          }}
-        >
+        <button className="btn-text-reset" onClick={() => { setSelectedCategory('all'); setSearchTerm(''); setPriceRange({ min: 0, max: 2000 }); }}>
           Reset All Filters
         </button>
       </aside>

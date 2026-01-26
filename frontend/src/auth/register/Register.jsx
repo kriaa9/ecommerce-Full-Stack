@@ -73,7 +73,7 @@ const Register = () => {
     setIsLoading(true);
 
     try {
-      const { confirmPassword, ...registerData } = formData;
+      const { confirmPassword: _confirmPassword, ...registerData } = formData;
       await authService.register(registerData);
       navigate('/');
     } catch (error) {
@@ -99,83 +99,33 @@ const Register = () => {
           <div className="form-row">
             <div className="form-group">
               <label htmlFor="firstname">First Name</label>
-              <input
-                type="text"
-                id="firstname"
-                name="firstname"
-                value={formData.firstname}
-                onChange={handleChange}
-                placeholder="Enter first name"
-                className={errors.firstname ? 'error' : ''}
-              />
-              {errors.firstname && (
-                <span className="error-message">{errors.firstname}</span>
-              )}
+              <input type="text" id="firstname" name="firstname" value={formData.firstname} onChange={handleChange} placeholder="Enter first name" className={errors.firstname ? 'error' : ''}/>
+              {errors.firstname && <span className="error-message">{errors.firstname}</span>}
             </div>
 
             <div className="form-group">
               <label htmlFor="lastname">Last Name</label>
-              <input
-                type="text"
-                id="lastname"
-                name="lastname"
-                value={formData.lastname}
-                onChange={handleChange}
-                placeholder="Enter last name"
-                className={errors.lastname ? 'error' : ''}
-              />
-              {errors.lastname && (
-                <span className="error-message">{errors.lastname}</span>
-              )}
+              <input type="text" id="lastname" name="lastname" value={formData.lastname} onChange={handleChange} placeholder="Enter last name" className={errors.lastname ? 'error' : ''}/>
+              {errors.lastname && <span className="error-message">{errors.lastname}</span>}
             </div>
           </div>
 
           <div className="form-group">
             <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Enter your email"
-              className={errors.email ? 'error' : ''}
-            />
-            {errors.email && (
-              <span className="error-message">{errors.email}</span>
-            )}
+            <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter your email" className={errors.email ? 'error' : ''}/>
+            {errors.email && <span className="error-message">{errors.email}</span>}
           </div>
 
           <div className="form-group">
             <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              placeholder="Create a password"
-              className={errors.password ? 'error' : ''}
-            />
-            {errors.password && (
-              <span className="error-message">{errors.password}</span>
-            )}
+            <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} placeholder="Create a password" className={errors.password ? 'error' : ''}/>
+            {errors.password && <span className="error-message">{errors.password}</span>}
           </div>
 
           <div className="form-group">
             <label htmlFor="confirmPassword">Confirm Password</label>
-            <input
-              type="password"
-              id="confirmPassword"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              placeholder="Confirm your password"
-              className={errors.confirmPassword ? 'error' : ''}
-            />
-            {errors.confirmPassword && (
-              <span className="error-message">{errors.confirmPassword}</span>
-            )}
+            <input type="password" id="confirmPassword" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} placeholder="Confirm your password" className={errors.confirmPassword ? 'error' : ''}/>
+            {errors.confirmPassword && <span className="error-message">{errors.confirmPassword}</span>}
           </div>
 
           <button type="submit" className="register-button" disabled={isLoading}>

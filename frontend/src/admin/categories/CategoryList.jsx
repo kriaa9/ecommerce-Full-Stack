@@ -64,9 +64,7 @@ const CategoryList = () => {
             render: (row) => (
                 <div className="actions">
                     <Link to={`/admin/categories/${row.id}/edit`} className="btn-icon" title="Edit">✏️</Link>
-                    <button onClick={() => openDeleteModal(row.id)} className="btn-icon" title="Delete"
-                            style={{color: '#ef4444'}}>🗑️
-                    </button>
+                    <button onClick={() => openDeleteModal(row.id)} className="btn-icon" title="Delete" style={{color: '#ef4444'}}>🗑️</button>
                 </div>
             )
         }
@@ -76,29 +74,14 @@ const CategoryList = () => {
         <div className="category-list-page">
             <div className="admin-page-header">
                 <h1>Categories</h1>
-                <Link to="/admin/categories/new" className="btn-primary">
-                    <span>+</span> Add New Category
-                </Link>
+                <Link to="/admin/categories/new" className="btn-primary"><span>+</span> Add New Category</Link>
             </div>
 
             {error && <div className="admin-card" style={{color: '#ef4444', marginBottom: '1rem'}}>{error}</div>}
-
             <div className="admin-card">
-                <DataTable
-                    columns={columns}
-                    data={categories}
-                    loading={loading}
-                    emptyMessage="No categories found. Get started by creating your first category."
-                />
+                <DataTable columns={columns} data={categories} loading={loading} emptyMessage="No categories found. Get started by creating your first category." />
             </div>
-
-            <ConfirmModal
-                isOpen={isModalOpen}
-                title="Delete Category"
-                message="Are you sure you want to delete this category? This action cannot be undone."
-                onConfirm={handleDelete}
-                onCancel={() => setIsModalOpen(false)}
-            />
+            <ConfirmModal isOpen={isModalOpen} title="Delete Category" message="Are you sure you want to delete this category? This action cannot be undone." onConfirm={handleDelete} onCancel={() => setIsModalOpen(false)} />
         </div>
     );
 };

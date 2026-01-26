@@ -86,49 +86,15 @@ const Login = () => {
                 <form onSubmit={handleSubmit} className="login-form">
                     <div className="form-group">
                         <label htmlFor="email">Email</label>
-                        <input
-                            type="email"
-                            id="email"
-                            name="email"
-                            value={formData.email}
-                            onChange={handleChange}
-                            placeholder="Enter your email"
-                            className={errors.email ? 'error' : ''}
-                        />
-                        {errors.email && (
-                            <span className="error-message">{errors.email}</span>
-                        )}
+                        <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} placeholder="Enter your email" className={errors.email ? 'error' : ''}/>
+                        {errors.email && <span className="error-message">{errors.email}</span>}
                     </div>
 
-                    <div className="form-group">
-                        <label htmlFor="password">Password</label>
-                        <input
-                            type="password"
-                            id="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            placeholder="Enter your password"
-                            className={errors.password ? 'error' : ''}
-                        />
-                        {errors.password && (
-                            <span className="error-message">{errors.password}</span>
-                        )}
-                    </div>
+                    <div className="form-group"><label htmlFor="password">Password</label><input type="password" id="password" name="password" value={formData.password} onChange={handleChange} placeholder="Enter your password" className={errors.password ? 'error' : ''}/>{errors.password && <span className="error-message">{errors.password}</span>}</div>
 
-                    <div className="form-options">
-                        <label className="remember-me">
-                            <input type="checkbox"/>
-                            <span>Remember me</span>
-                        </label>
-                        <Link to="/forgot-password" className="forgot-password">
-                            Forgot password?
-                        </Link>
-                    </div>
+                    <div className="form-options"><label className="remember-me"><input type="checkbox"/><span>Remember me</span></label><Link to="/forgot-password" className="forgot-password">Forgot password?</Link></div>
 
-                    <button type="submit" className="login-button" disabled={isLoading}>
-                        {isLoading ? 'Signing in...' : 'Sign In'}
-                    </button>
+                    <button type="submit" className="login-button" disabled={isLoading}>{isLoading ? 'Signing in...' : 'Sign In'}</button>
                 </form>
 
                 <p className="register-link">

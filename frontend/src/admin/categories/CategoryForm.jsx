@@ -7,37 +7,15 @@ import categoryService from '../../api/categoryService';
  */
 const FormField = ({ label, name, value, onChange, placeholder, required = false }) => (
     <div className="form-group">
-        <label htmlFor={name} className="form-label">
-            {label}{required && ' *'}
-        </label>
-        <input
-            id={name}
-            type="text"
-            name={name}
-            value={value}
-            onChange={onChange}
-            placeholder={placeholder}
-            required={required}
-            className="form-input"
-            aria-required={required}
-        />
+        <label htmlFor={name} className="form-label">{label}{required && ' *'}</label>
+        <input id={name} type="text" name={name} value={value} onChange={onChange} placeholder={placeholder} required={required} className="form-input" aria-required={required} />
     </div>
 );
 
 const TextAreaField = ({ label, name, value, onChange, placeholder, rows = 4 }) => (
     <div className="form-group">
-        <label htmlFor={name} className="form-label">
-            {label}
-        </label>
-        <textarea
-            id={name}
-            name={name}
-            value={value}
-            onChange={onChange}
-            placeholder={placeholder}
-            rows={rows}
-            className="form-textarea"
-        />
+        <label htmlFor={name} className="form-label">{label}</label>
+        <textarea id={name} name={name} value={value} onChange={onChange} placeholder={placeholder} rows={rows} className="form-textarea" />
     </div>
 );
 
@@ -120,47 +98,20 @@ const CategoryForm = () => {
         <main className="category-form-page">
             <header className="admin-page-header">
                 <h1>{isEditMode ? 'Edit Category' : 'Add New Category'}</h1>
-                <Link to="/admin/categories" className="btn-secondary">
-                    Cancel
-                </Link>
+                <Link to="/admin/categories" className="btn-secondary">Cancel</Link>
             </header>
 
             <article className="admin-card admin-form-card">
-                {error && (
-                    <p className="error-message" role="alert">
-                        {error}
-                    </p>
-                )}
+                {error && <p className="error-message" role="alert">{error}</p>}
 
                 <form onSubmit={handleSubmit}>
-                    <FormField
-                        label="Category Name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        placeholder="e.g. Electronics"
-                        required
-                    />
+                    <FormField label="Category Name" name="name" value={formData.name} onChange={handleChange} placeholder="e.g. Electronics" required />
 
-                    <TextAreaField
-                        label="Description"
-                        name="description"
-                        value={formData.description}
-                        onChange={handleChange}
-                        placeholder="Brief description of this category..."
-                    />
+                    <TextAreaField label="Description" name="description" value={formData.description} onChange={handleChange} placeholder="Brief description of this category..." />
 
                     <footer className="form-actions">
-                        <button
-                            type="submit"
-                            className="btn-primary btn-flex"
-                            disabled={submitting}
-                        >
-                            {submitting ? 'Saving...' : (isEditMode ? 'Update Category' : 'Create Category')}
-                        </button>
-                        <Link to="/admin/categories" className="btn-secondary btn-flex">
-                            Cancel
-                        </Link>
+                        <button type="submit" className="btn-primary btn-flex" disabled={submitting}>{submitting ? 'Saving...' : (isEditMode ? 'Update Category' : 'Create Category')}</button>
+                        <Link to="/admin/categories" className="btn-secondary btn-flex">Cancel</Link>
                     </footer>
                 </form>
             </article>

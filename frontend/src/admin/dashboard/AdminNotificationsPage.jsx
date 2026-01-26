@@ -44,26 +44,16 @@ const AdminNotificationsPage = () => {
 
             <div className="notifications-list">
                 {notifications.length === 0 ? (
-                    <div className="admin-card empty">
-                        <p>No notifications yet. New orders will appear here.</p>
-                    </div>
+                    <div className="admin-card empty"><p>No notifications yet. New orders will appear here.</p></div>
                 ) : (
                     notifications.map(n => (
                         <div key={n.id} className={`notification-card ${n.read ? 'read' : 'unread'}`}>
-                            <div className="notif-icon">
-                                {n.type === 'NEW_ORDER' ? '🛍️' : '🔔'}
-                            </div>
+                            <div className="notif-icon">{n.type === 'NEW_ORDER' ? '🛍️' : '🔔'}</div>
                             <div className="notif-content">
                                 <p className="notif-message">{n.message}</p>
-                                <span className="notif-time">
-                                    {new Date(n.createdAt).toLocaleString()}
-                                </span>
+                                <span className="notif-time">{new Date(n.createdAt).toLocaleString()}</span>
                             </div>
-                            {!n.read && (
-                                <button className="btn-mark-read" onClick={() => markAsRead(n.id)}>
-                                    Mark as Read
-                                </button>
-                            )}
+                            {!n.read && <button className="btn-mark-read" onClick={() => markAsRead(n.id)}>Mark as Read</button>}
                         </div>
                     ))
                 )}
