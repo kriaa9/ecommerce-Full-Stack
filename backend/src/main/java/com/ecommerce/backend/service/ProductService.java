@@ -5,6 +5,7 @@ import com.ecommerce.backend.model.Category;
 import com.ecommerce.backend.model.Product;
 import com.ecommerce.backend.model.User;
 import com.ecommerce.backend.repository.CategoryRepository;
+import com.ecommerce.backend.repository.OrderRepository;
 import com.ecommerce.backend.repository.ProductRepository;
 import com.ecommerce.backend.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -30,6 +31,7 @@ public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
+    private final OrderRepository orderRepository;
     private final CloudinaryService cloudinaryService;
 
     // --- READ OPERATIONS ---
@@ -142,18 +144,20 @@ public class ProductService {
     }
 
     public com.ecommerce.backend.dto.DashboardStatsResponse getDashboardStats() {
-        List<Product> products = productRepository.findAll();
+        long totalProducts = productRepository.count();
         long totalCategories = categoryRepository.count();
+        long totalOrders = orderRepository.count();
 
+        List<Product> products = productRepository.findAll();
         java.math.BigDecimal totalValue = products.stream()
                 .map(product -> product.getPrice().multiply(java.math.BigDecimal.valueOf(product.getStockQuantity())))
                 .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
 
         return com.ecommerce.backend.dto.DashboardStatsResponse.builder()
-                .totalProducts(products.size())
+                .totalProducts(totalProducts)
                 .totalCategories(totalCategories)
                 .totalInventoryValue(totalValue)
-                .totalOrders(0)
+                .totalOrders(totalOrders)
                 .build();
     }
 }

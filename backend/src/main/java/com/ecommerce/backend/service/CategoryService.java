@@ -1,6 +1,5 @@
 package com.ecommerce.backend.service;
 
-
 import com.ecommerce.backend.dto.CategoryRequest;
 import com.ecommerce.backend.model.Category;
 import com.ecommerce.backend.repository.CategoryRepository;
@@ -21,7 +20,6 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
-
     // create a new category
     public Category createCategory(CategoryRequest request) {
         if (categoryRepository.existsByName(request.getName())) {
@@ -33,7 +31,6 @@ public class CategoryService {
                 .build();
         return categoryRepository.save(category);
     }
-
 
     public Category updateCategory(Long id, CategoryRequest request) {
         Category category = categoryRepository.findById(id)

@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import adminService from '../../api/adminService';
+import orderService from '../../api/orderService';
+import { Link } from 'react-router-dom';
 
 /**
  * AdminDashboard - Main dashboard home page
@@ -12,21 +14,26 @@ const AdminDashboard = () => {
         totalInventoryValue: 0,
         totalOrders: 0
     });
+    const [recentOrders, setRecentOrders] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchStats = async () => {
+        const fetchData = async () => {
             try {
                 setLoading(true);
-                const data = await adminService.getStats();
-                setStats(data);
+                const [statsData, ordersData] = await Promise.all([
+                    adminService.getStats(),
+                    orderService.getAllOrders()
+                ]);
+                setStats(statsData);
+                setRecentOrders(ordersData.slice(0, 5)); // Show only latest 5
             } catch (err) {
-                console.error('Error fetching dashboard stats:', err);
+                console.error('Error fetching dashboard data:', err);
             } finally {
                 setLoading(false);
             }
         };
-        fetchStats();
+        fetchData();
     }, []);
 
     if (loading) return <div className="admin-loading">Loading dashboard insights...</div>;
@@ -57,6 +64,43 @@ const AdminDashboard = () => {
                     <h3>Pending Orders</h3>
                     <div className="stat-value">{stats.totalOrders}</div>
                     <p style={{fontSize: '0.8rem', color: '#64748b', marginTop: '0.5rem'}}>Awaiting processing</p>
+                </div>
+            </div>
+
+            <div className="admin-card" style={{marginTop: '2rem'}}>
+                <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem'}}>
+                    <h2>Recent Orders</h2>
+                    <Link to="/admin/orders" className="btn-text" style={{fontSize: '0.9rem', color: '#2563eb', fontWeight: '600'}}>View All</Link>
+                </div>
+                <div className="orders-summary-table">
+                    {recentOrders.length === 0 ? (
+                        <p style={{color: '#94a3b8', textAlign: 'center', padding: '1rem'}}>No orders yet.</p>
+                    ) : (
+                        <table style={{width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem'}}>
+                            <thead>
+                                <tr style={{textAlign: 'left', borderBottom: '1px solid #f1f5f9', color: '#64748b'}}>
+                                    <th style={{padding: '0.75rem 0'}}>ID</th>
+                                    <th>Customer</th>
+                                    <th>Total</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {recentOrders.map(order => (
+                                    <tr key={order.id} style={{borderBottom: '1px solid #f8fafc'}}>
+                                        <td style={{padding: '0.75rem 0', fontWeight: '600'}}>#{order.id}</td>
+                                        <td>{order.user.firstName} {order.user.lastName}</td>
+                                        <td>${order.totalAmount.toFixed(2)}</td>
+                                        <td>
+                                            <span style={{fontSize: '0.75rem', padding: '2px 8px', borderRadius: '12px', background: '#fef3c7', color: '#92400e'}}>
+                                                {order.status}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    )}
                 </div>
             </div>
 

@@ -1,0 +1,131 @@
+.checkout-page {
+    background: #f8fafc;
+    min-height: 100vh;
+    padding: 3rem 0;
+}
+
+.checkout-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 2.5rem;
+    padding: 0 1.5rem;
+}
+
+.checkout-section {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.checkout-section h2 {
+    margin: 0 0 2rem 0;
+    font-size: 1.5rem;
+    color: #1e293b;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: #475569;
+}
+
+.form-group textarea {
+    width: 100%;
+    padding: 1rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: border-color 0.2s;
+}
+
+.form-group textarea:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+.payment-select {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: #eff6ff;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #bfdbfe;
+    margin-bottom: 0.5rem;
+}
+
+.payment-select label {
+    margin: 0;
+    color: #1e40af;
+}
+
+.payment-note {
+    font-size: 0.85rem;
+    color: #64748b;
+}
+
+.checkout-items-preview {
+    max-height: 200px;
+    overflow-y: auto;
+    margin-bottom: 1.5rem;
+}
+
+.preview-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 0.75rem;
+}
+
+.total-price {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #2563eb;
+}
+
+.btn-place-order {
+    width: 100%;
+    background: #1e293b;
+    color: white;
+    border: none;
+    padding: 1.25rem;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    transition: transform 0.1s, background 0.2s;
+}
+
+.btn-place-order:hover {
+    background: #0f172a;
+    transform: translateY(-2px);
+}
+
+.btn-place-order:active {
+    transform: translateY(0);
+}
+
+.btn-place-order:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.checkout-error {
+    background: #fef2f2;
+    color: #b91c1c;
+    padding: 1rem;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+    border: 1px solid #fecaca;
+}

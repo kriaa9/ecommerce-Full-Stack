@@ -1,35 +1,66 @@
 import api from './axios';
 
 const ENDPOINTS = {
-  PRODUCTS: '/api/products',
-  CATEGORIES: '/api/categories',
+  PUBLIC: '/api/products',
+  ADMIN: '/api/v1/admin/products',
+  CATEGORIES: '/api/categories', // Public endpoint for categories
 };
 
 export const productService = {
   /**
    * Get all products for the public catalog
-   * @returns {Promise<Array>} List of products
    */
   getAllProducts: async () => {
-    const response = await api.get(ENDPOINTS.PRODUCTS);
+    const response = await api.get(ENDPOINTS.PUBLIC);
     return response.data;
   },
 
   /**
    * Get a single product by ID
-   * @param {number} id - Product ID
-   * @returns {Promise<Object>} Product details
    */
   getProductById: async (id) => {
-    const response = await api.get(`${ENDPOINTS.PRODUCTS}/${id}`);
+    const response = await api.get(`${ENDPOINTS.PUBLIC}/${id}`);
     return response.data;
   },
 
   /**
-   * Get all categories for filtering (Uses admin endpoint which is now permitted or public)
-   * Note: I may need to check if /api/v1/admin/categories is public. 
-   * If not, I should ideally have a public categories endpoint.
-   * For now, I will try fetching from the existing one.
+   * Get all products for admin dashboard
+   */
+  getAdminProducts: async () => {
+    const response = await api.get(ENDPOINTS.ADMIN);
+    return response.data;
+  },
+
+  /**
+   * Create a new product (Admin)
+   */
+  createProduct: async (formData) => {
+    const response = await api.post(ENDPOINTS.ADMIN, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    });
+    return response.data;
+  },
+
+  /**
+   * Update an existing product (Admin)
+   */
+  updateProduct: async (id, productData) => {
+    const isFormData = productData instanceof FormData;
+    const response = await api.put(`${ENDPOINTS.ADMIN}/${id}`, productData, {
+      headers: isFormData ? { 'Content-Type': 'multipart/form-data' } : { 'Content-Type': 'application/json' },
+    });
+    return response.data;
+  },
+
+  /**
+   * Delete a product (Admin)
+   */
+  deleteProduct: async (id) => {
+    await api.delete(`${ENDPOINTS.ADMIN}/${id}`);
+  },
+
+  /**
+   * Get all categories for filtering (Public)
    */
   getCategories: async () => {
     const response = await api.get(ENDPOINTS.CATEGORIES);

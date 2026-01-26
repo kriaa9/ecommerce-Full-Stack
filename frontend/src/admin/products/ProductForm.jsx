@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import adminService from "../../api/adminService";
+import productService from '../../api/productService';
+import categoryService from '../../api/categoryService';
+import './ProductForm.css';
 import ImageUpload from "../../components/ImageUpload";
 
 /**
@@ -33,12 +35,12 @@ const ProductForm = () => {
       try {
         setLoading(true);
         // Fetch categories for dropdown
-        const cats = await adminService.getCategories();
+        const cats = await categoryService.getCategories();
         setCategories(Array.isArray(cats) ? cats : []);
 
         if (isEditMode) {
           // Fetch specific product to edit
-          const products = await adminService.getProducts();
+          const products = await productService.getAdminProducts();
           const product = products.find((p) => p.id === parseInt(id));
 
           if (product) {
@@ -109,9 +111,9 @@ const ProductForm = () => {
 
       if (isEditMode) {
         // Now passing postData (FormData) to support image updates on backend
-        await adminService.updateProduct(id, postData);
+        await productService.updateProduct(id, postData);
       } else {
-        await adminService.createProduct(postData);
+        await productService.createProduct(postData);
       }
       navigate("/admin/products");
     } catch (err) {

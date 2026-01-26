@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
-import adminService from '../../api/adminService';
+import categoryService from '../../api/categoryService';
 import DataTable from '../../components/DataTable';
 import ConfirmModal from '../../components/ConfirmModal';
 
@@ -23,7 +23,7 @@ const CategoryList = () => {
     const fetchCategories = async () => {
         try {
             setLoading(true);
-            const data = await adminService.getCategories();
+            const data = await categoryService.getCategories();
             setCategories(data);
             setError(null);
         } catch (err) {
@@ -41,7 +41,7 @@ const CategoryList = () => {
 
     const handleDelete = async () => {
         try {
-            await adminService.deleteCategory(selectedId);
+            await categoryService.deleteCategory(selectedId);
             setCategories(categories.filter(cat => cat.id !== selectedId));
             setIsModalOpen(false);
         } catch (err) {

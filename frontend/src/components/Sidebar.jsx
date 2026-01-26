@@ -1,4 +1,6 @@
 import {NavLink} from 'react-router-dom';
+import {useState, useEffect} from 'react';
+import notificationService from '../api/notificationService';
 import './Sidebar.css';
 
 /**
@@ -6,6 +8,23 @@ import './Sidebar.css';
  * Uses NavLink for active state styling
  */
 const Sidebar = () => {
+    const [unreadCount, setUnreadCount] = useState(0);
+
+    useEffect(() => {
+        const fetchUnread = async () => {
+            try {
+                const data = await notificationService.getUnreadCount();
+                setUnreadCount(data);
+            } catch (err) {
+                console.error('Error fetching unread count:', err);
+            }
+        };
+        fetchUnread();
+        // Check every minute
+        const interval = setInterval(fetchUnread, 60000);
+        return () => clearInterval(interval);
+    }, []);
+
     return (
         <aside className="admin-sidebar">
             <div className="sidebar-header">
@@ -19,6 +38,23 @@ const Sidebar = () => {
                 >
                     <span className="sidebar-icon">📊</span>
                     Dashboard
+                </NavLink>
+
+                <NavLink
+                    to="/admin/orders"
+                    className={({isActive}) => `sidebar-link ${isActive ? 'active' : ''}`}
+                >
+                    <span className="sidebar-icon">🛒</span>
+                    Orders
+                </NavLink>
+
+                <NavLink
+                    to="/admin/notifications"
+                    className={({isActive}) => `sidebar-link ${isActive ? 'active' : ''}`}
+                >
+                    <span className="sidebar-icon">🔔</span>
+                    Notifications
+                    {unreadCount > 0 && <span className="notif-badge">{unreadCount}</span>}
                 </NavLink>
 
                 <NavLink

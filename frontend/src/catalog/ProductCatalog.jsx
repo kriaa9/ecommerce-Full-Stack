@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
 import productService from '../api/productService';
+import authService from '../api/authService';
+import { useCart } from '../context/CartContext';
 import './ProductCatalog.css';
 
 const ProductCatalog = () => {
+  const { addToCart } = useCart();
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [categories, setCategories] = useState([]);
@@ -188,9 +191,15 @@ const ProductCatalog = () => {
                   <h4 className="product-card-title">{product.name}</h4>
                   <div className="product-card-bottom">
                     <span className="product-card-price">${product.price.toFixed(2)}</span>
-                    <button className="btn-add-cart" disabled={product.stockQuantity === 0}>
-                      {product.stockQuantity === 0 ? 'Sold Out' : '+'}
-                    </button>
+                    {!authService.isAdmin() && (
+                      <button 
+                        className="btn-add-cart" 
+                        disabled={product.stockQuantity === 0}
+                        onClick={() => addToCart(product)}
+                      >
+                        {product.stockQuantity === 0 ? 'Sold Out' : '+'}
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>

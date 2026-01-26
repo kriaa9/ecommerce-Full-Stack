@@ -40,9 +40,11 @@ public class SecurityConfiguration {
                                                 // 2. ADMIN ENDPOINTS (Only users with Role.ADMIN)
                                                 // This expects the authority "ROLE_ADMIN" in the JWT
                                                 .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
-
                                                 // 3. USER ENDPOINTS (Any authenticated user: ADMIN or USER)
-                                                .requestMatchers("/api/v1/users/**").authenticated()
+                                                .requestMatchers(
+                                                                "/api/v1/users/**",
+                                                                "/api/v1/orders/**")
+                                                .authenticated()
 
                                                 // 4. ALL OTHER REQUESTS (Must be logged in)
                                                 .anyRequest().authenticated())

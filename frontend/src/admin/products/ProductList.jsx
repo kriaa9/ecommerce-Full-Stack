@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {Link} from 'react-router-dom';
-import adminService from '../../api/adminService';
+import productService from '../../api/productService';
 import DataTable from '../../components/DataTable';
 import ConfirmModal from '../../components/ConfirmModal';
 
@@ -23,7 +23,7 @@ const ProductList = () => {
     const fetchProducts = async () => {
         try {
             setLoading(true);
-            const data = await adminService.getProducts();
+            const data = await productService.getAdminProducts();
             setProducts(data);
             setError(null);
         } catch (err) {
@@ -41,7 +41,7 @@ const ProductList = () => {
 
     const handleDelete = async () => {
         try {
-            await adminService.deleteProduct(selectedId);
+            await productService.deleteProduct(selectedId);
             setProducts(products.filter(prod => prod.id !== selectedId));
             setIsModalOpen(false);
         } catch (err) {

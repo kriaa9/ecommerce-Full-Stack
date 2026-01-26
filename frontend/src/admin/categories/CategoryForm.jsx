@@ -1,6 +1,6 @@
 import {useEffect, useState} from 'react';
 import {Link, useNavigate, useParams} from 'react-router-dom';
-import adminService from '../../api/adminService';
+import categoryService from '../../api/categoryService';
 
 /**
  * CategoryForm - Reusable form for creating and editing categories
@@ -22,8 +22,8 @@ const CategoryForm = () => {
         const fetchCategory = async () => {
             try {
                 setLoading(true);
-                const categories = await adminService.getCategories();
-                const category = categories.find(cat => cat.id === parseInt(id));
+                const cats = await categoryService.getCategories();
+                const category = cats.find(cat => cat.id === parseInt(id));
 
                 if (category) {
                     setFormData({
@@ -61,9 +61,9 @@ const CategoryForm = () => {
 
         try {
             if (isEditMode) {
-                await adminService.updateCategory(id, formData);
+                await categoryService.updateCategory(id, formData);
             } else {
-                await adminService.createCategory(formData);
+                await categoryService.createCategory(formData);
             }
             navigate('/admin/categories');
         } catch (err) {
