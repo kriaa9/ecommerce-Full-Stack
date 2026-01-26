@@ -79,6 +79,22 @@ const ProductList = () => {
             )
         },
         {
+            key: 'status',
+            label: 'Status',
+            render: (row) => (
+                <span style={{
+                    padding: '2px 8px',
+                    borderRadius: '12px',
+                    fontSize: '0.75rem',
+                    fontWeight: '600',
+                    background: row.active ? '#dcfce7' : '#f1f5f9',
+                    color: row.active ? '#15803d' : '#475569'
+                }}>
+          {row.active ? 'Active' : 'Hidden'}
+        </span>
+            )
+        },
+        {
             key: 'actions',
             label: 'Actions',
             render: (row) => (

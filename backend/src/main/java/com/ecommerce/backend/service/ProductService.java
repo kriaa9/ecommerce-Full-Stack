@@ -35,7 +35,11 @@ public class ProductService {
     // --- READ OPERATIONS ---
 
     public List<Product> getAllProducts() {
-        // We filter stream to return ONLY active products to the frontend
+        return productRepository.findAll();
+    }
+
+    public List<Product> getAllActiveProducts() {
+        // We filter stream to return ONLY active products to the public catalog
         return productRepository.findAll().stream()
                 .filter(product -> Boolean.TRUE.equals(product.getActive()))
                 .collect(Collectors.toList());

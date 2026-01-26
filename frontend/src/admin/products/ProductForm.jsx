@@ -19,6 +19,7 @@ const ProductForm = () => {
     price: "",
     stockQuantity: "",
     categoryId: "",
+    active: true,
   });
   const [photoFile, setPhotoFile] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
@@ -48,6 +49,7 @@ const ProductForm = () => {
               price: product.price || "",
               stockQuantity: product.stockQuantity || "",
               categoryId: product.category?.id || "",
+              active: product.active !== undefined ? product.active : true,
             });
             if (product.imageUrls && product.imageUrls.length > 0) {
               setPhotoPreview(product.imageUrls[0]);
@@ -68,10 +70,10 @@ const ProductForm = () => {
   }, [id, isEditMode]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
+    const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -95,7 +97,7 @@ const ProductForm = () => {
             price: parseFloat(formData.price),
             stockQuantity: parseInt(formData.stockQuantity),
             categoryId: parseInt(formData.categoryId),
-            active: true // Ensure product stays active
+            active: formData.active,
           }),
         ],
         { type: "application/json" },
@@ -328,6 +330,20 @@ const ProductForm = () => {
                   </option>
                 ))}
               </select>
+            </div>
+
+            <div className="form-group" style={{ marginBottom: "1.25rem", display: "flex", alignItems: "center", gap: "0.5rem", padding: "0.75rem", background: "#f8fafc", borderRadius: "8px" }}>
+              <input
+                type="checkbox"
+                name="active"
+                id="active-toggle"
+                checked={formData.active}
+                onChange={handleChange}
+                style={{ width: "18px", height: "18px", cursor: "pointer" }}
+              />
+              <label htmlFor="active-toggle" style={{ cursor: "pointer", fontWeight: "600", color: "#1e293b" }}>
+                Product Visible to Public
+              </label>
             </div>
           </div>
 
