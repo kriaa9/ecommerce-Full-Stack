@@ -1,11 +1,20 @@
 .catalog-container {
   display: grid;
-  grid-template-columns: 240px 1fr;
-  gap: 2rem;
+  grid-template-columns: 1fr; /* Mobile default: single column */
+  gap: 1.5rem;
   max-width: 1400px;
-  margin: 2rem auto;
-  padding: 0 2rem;
+  margin: 1.5rem auto;
+  padding: 0 1rem;
   min-height: 80vh;
+}
+
+@media (min-width: 768px) {
+  .catalog-container {
+    grid-template-columns: 240px 1fr;
+    gap: 2rem;
+    margin: 2rem auto;
+    padding: 0 2rem;
+  }
 }
 
 /* Sidebar Styling */
@@ -142,8 +151,15 @@
 /* Product Grid */
 .product-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* Allow 2 columns on mobile */
+  gap: 1rem;
+}
+
+@media (min-width: 576px) {
+  .product-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
+  }
 }
 
 .product-card {
@@ -296,14 +312,16 @@
 }
 
 /* Responsive */
+/* Responsive */
 @media (max-width: 768px) {
-  .catalog-container {
-    grid-template-columns: 1fr;
-  }
-
   .catalog-sidebar {
     position: static;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
+    padding: 1rem;
+  }
+
+  .sidebar-section {
+    margin-bottom: 1.5rem;
   }
 
   .category-list {
@@ -311,9 +329,33 @@
     overflow-x: auto;
     padding-bottom: 0.5rem;
     gap: 0.5rem;
+    scrollbar-width: none; /* Firefox */
+  }
+
+  .category-list::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
   }
 
   .category-list li {
     white-space: nowrap;
+    padding: 0.5rem 1rem;
+    background: #f1f5f9;
+    font-size: 0.9rem;
+  }
+  
+  .catalog-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-grid {
+    grid-template-columns: 1fr; /* Single column on very small screens if preferred, or keep 2 */
+  }
+  
+  .product-card-title {
+    font-size: 1rem;
   }
 }

@@ -72,35 +72,37 @@ const AdminDashboard = () => {
                     <h2>Recent Orders</h2>
                     <Link to="/admin/orders" className="btn-text" style={{fontSize: '0.9rem', color: '#2563eb', fontWeight: '600'}}>View All</Link>
                 </div>
-                <div className="orders-summary-table">
-                    {recentOrders.length === 0 ? (
-                        <p style={{color: '#94a3b8', textAlign: 'center', padding: '1rem'}}>No orders yet.</p>
-                    ) : (
-                        <table style={{width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem'}}>
-                            <thead>
-                                <tr style={{textAlign: 'left', borderBottom: '1px solid #f1f5f9', color: '#64748b'}}>
-                                    <th style={{padding: '0.75rem 0'}}>ID</th>
-                                    <th>Customer</th>
-                                    <th>Total</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {recentOrders.map(order => (
-                                    <tr key={order.id} style={{borderBottom: '1px solid #f8fafc'}}>
-                                        <td style={{padding: '0.75rem 0', fontWeight: '600'}}>#{order.id}</td>
-                                        <td>{order.user.firstName} {order.user.lastName}</td>
-                                        <td>${order.totalAmount.toFixed(2)}</td>
-                                        <td>
-                                            <span style={{fontSize: '0.75rem', padding: '2px 8px', borderRadius: '12px', background: '#fef3c7', color: '#92400e'}}>
-                                                {order.status}
-                                            </span>
-                                        </td>
+                <div className="admin-table-container">
+                    <div className="orders-summary-table">
+                        {recentOrders.length === 0 ? (
+                            <p style={{color: '#94a3b8', textAlign: 'center', padding: '1rem'}}>No orders yet.</p>
+                        ) : (
+                            <table style={{width: '100%', borderCollapse: 'collapse', fontSize: '0.9rem'}}>
+                                <thead>
+                                    <tr style={{textAlign: 'left', borderBottom: '1px solid #f1f5f9', color: '#64748b'}}>
+                                        <th style={{padding: '0.75rem 0'}}>ID</th>
+                                        <th>Customer</th>
+                                        <th>Total</th>
+                                        <th>Status</th>
                                     </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    )}
+                                </thead>
+                                <tbody>
+                                    {recentOrders.map(order => (
+                                        <tr key={order.id} style={{borderBottom: '1px solid #f8fafc'}}>
+                                            <td style={{padding: '0.75rem 0', fontWeight: '600'}}>#{order.id}</td>
+                                            <td>{order.user.firstName} {order.user.lastName}</td>
+                                            <td>${order.totalAmount.toFixed(2)}</td>
+                                            <td>
+                                                <span style={{fontSize: '0.75rem', padding: '2px 8px', borderRadius: '12px', background: '#fef3c7', color: '#92400e'}}>
+                                                    {order.status}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        )}
+                    </div>
                 </div>
             </div>
 

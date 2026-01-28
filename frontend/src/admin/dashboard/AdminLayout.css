@@ -7,9 +7,16 @@
 
 .admin-content {
     flex: 1;
-    margin-left: 250px; /* Same as sidebar width */
-    padding: 2rem;
-    min-height: 100vh;
+    margin-left: 0; /* Mobile-first: no margin */
+    padding: 1rem;
+    min-height: 100dvh;
+}
+
+@media (min-width: 768px) {
+    .admin-content {
+        margin-left: 250px; /* Desktop: keep sidebar margin */
+        padding: 2rem;
+    }
 }
 
 /* Admin Page Header */
@@ -98,9 +105,16 @@
 }
 
 /* Admin Table Styles */
+.admin-table-container {
+    width: 100%;
+    overflow-x: auto; /* Horizontal scroll for tables */
+    -webkit-overflow-scrolling: touch;
+}
+
 .admin-table {
     width: 100%;
     border-collapse: collapse;
+    min-width: 600px; /* Ensure table doesn't squash too much */
 }
 
 .admin-table th {
@@ -179,22 +193,15 @@
     color: #334155;
 }
 
-/* Responsive */
+/* Responsive refinements reached via global style updates */
 @media (max-width: 768px) {
-    .admin-sidebar {
-        width: 70px;
+    .admin-page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
     }
-
-    .admin-content {
-        margin-left: 70px;
-        padding: 1rem;
-    }
-
-    .sidebar-link span:not(.sidebar-icon) {
-        display: none;
-    }
-
-    .sidebar-header h2 {
-        display: none;
+    
+    .admin-page-header h1 {
+        font-size: 1.5rem;
     }
 }

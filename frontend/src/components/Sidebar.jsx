@@ -9,6 +9,7 @@ import './Sidebar.css';
  */
 const Sidebar = () => {
     const [unreadCount, setUnreadCount] = useState(0);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     useEffect(() => {
         const fetchUnread = async () => {
@@ -26,7 +27,23 @@ const Sidebar = () => {
     }, []);
 
     return (
-        <aside className="admin-sidebar">
+        <>
+            <button 
+                className="admin-sidebar-toggle"
+                onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                aria-label="Toggle sidebar"
+            >
+                {isSidebarOpen ? '✕' : '☰'}
+            </button>
+
+            {isSidebarOpen && (
+                <div 
+                    className="admin-sidebar-overlay"
+                    onClick={() => setIsSidebarOpen(false)}
+                />
+            )}
+
+            <aside className={`admin-sidebar ${isSidebarOpen ? 'open' : ''}`}>
             <div className="sidebar-header">
                 <h2>Admin Panel</h2>
             </div>
@@ -35,6 +52,7 @@ const Sidebar = () => {
                 <NavLink
                     to="/admin/dashboard"
                     className={({isActive}) => `sidebar-link ${isActive ? 'active' : ''}`}
+                    onClick={() => setIsSidebarOpen(false)}
                 >
                     <span className="sidebar-icon">📊</span>
                     Dashboard
@@ -43,6 +61,7 @@ const Sidebar = () => {
                 <NavLink
                     to="/admin/orders"
                     className={({isActive}) => `sidebar-link ${isActive ? 'active' : ''}`}
+                    onClick={() => setIsSidebarOpen(false)}
                 >
                     <span className="sidebar-icon">🛒</span>
                     Orders
@@ -51,6 +70,7 @@ const Sidebar = () => {
                 <NavLink
                     to="/admin/notifications"
                     className={({isActive}) => `sidebar-link ${isActive ? 'active' : ''}`}
+                    onClick={() => setIsSidebarOpen(false)}
                 >
                     <span className="sidebar-icon">🔔</span>
                     Notifications
@@ -60,6 +80,7 @@ const Sidebar = () => {
                 <NavLink
                     to="/admin/categories"
                     className={({isActive}) => `sidebar-link ${isActive ? 'active' : ''}`}
+                    onClick={() => setIsSidebarOpen(false)}
                 >
                     <span className="sidebar-icon">📁</span>
                     Categories
@@ -68,6 +89,7 @@ const Sidebar = () => {
                 <NavLink
                     to="/admin/products"
                     className={({isActive}) => `sidebar-link ${isActive ? 'active' : ''}`}
+                    onClick={() => setIsSidebarOpen(false)}
                 >
                     <span className="sidebar-icon">📦</span>
                     Products
@@ -78,12 +100,14 @@ const Sidebar = () => {
                 <NavLink
                     to="/"
                     className="sidebar-link"
+                    onClick={() => setIsSidebarOpen(false)}
                 >
                     <span className="sidebar-icon">🏠</span>
                     Back to Store
                 </NavLink>
             </nav>
         </aside>
+    </>
     );
 };
 
