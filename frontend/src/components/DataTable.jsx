@@ -17,26 +17,28 @@ const DataTable = ({columns, data, loading, emptyMessage = "No data available"})
     }
 
     return (
-        <table className="admin-table">
-            <thead>
-            <tr>
-                {columns.map((column) => (
-                    <th key={column.key}>{column.label}</th>
-                ))}
-            </tr>
-            </thead>
-            <tbody>
-            {data.map((row, rowIndex) => (
-                <tr key={row.id || rowIndex}>
+        <div className="admin-table-container">
+            <table className="admin-table">
+                <thead>
+                <tr>
                     {columns.map((column) => (
-                        <td key={`${row.id || rowIndex}-${column.key}`}>
-                            {column.render ? column.render(row) : (row[column.key] || '-')}
-                        </td>
+                        <th key={column.key}>{column.label}</th>
                     ))}
                 </tr>
-            ))}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                {data.map((row, rowIndex) => (
+                    <tr key={row.id || rowIndex}>
+                        {columns.map((column) => (
+                            <td key={`${row.id || rowIndex}-${column.key}`}>
+                                {column.render ? column.render(row) : (row[column.key] || '-')}
+                            </td>
+                        ))}
+                    </tr>
+                ))}
+                </tbody>
+            </table>
+        </div>
     );
 };
 

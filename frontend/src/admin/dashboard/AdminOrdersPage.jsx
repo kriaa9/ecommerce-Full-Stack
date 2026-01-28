@@ -48,7 +48,7 @@ const AdminOrdersPage = () => {
                 </div>
             </div>
 
-            <div className="orders-table-container">
+            <div className="admin-table-container">
                 <table className="admin-table">
                     <thead>
                         <tr>
