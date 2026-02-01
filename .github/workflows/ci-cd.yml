@@ -78,7 +78,7 @@ jobs:
       # --- NEW: OWASP Dependency Check ---
       - name: OWASP Dependency Check
         if: steps.check_files.outputs.backend == 'true'
-        uses: dependency-check/dependency-check-action@v2
+        uses: dependency-check/github-action@v11.1.1
         with:
           project: 'ecommerce-backend'
           path: './backend'
