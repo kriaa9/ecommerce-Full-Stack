@@ -75,10 +75,10 @@ jobs:
           SPRING_DATASOURCE_PASSWORD: ${{ secrets.POSTGRES_PASSWORD || 'test_password' }}
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY || 'test_jwt_key_for_ci_testing_only_min_256_bits_required' }}
 
-      # --- NEW: OWASP Dependency Check ---
+      # --- FIXED: OWASP Dependency Check ---
       - name: OWASP Dependency Check
         if: steps.check_files.outputs.backend == 'true'
-        uses: dependency-check/github-action@v11.1.1
+        uses: dependency-check/Dependency-Check_Action@main
         with:
           project: 'ecommerce-backend'
           path: './backend'
