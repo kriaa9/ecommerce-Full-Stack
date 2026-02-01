@@ -15,7 +15,7 @@ jobs:
         env:
           POSTGRES_DB: ecommerce
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: root
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD || 'test_password' }}
         ports:
           - 5432:5432
         options: >-
@@ -43,7 +43,8 @@ jobs:
         env:
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/ecommerce
           SPRING_DATASOURCE_USERNAME: postgres
-          SPRING_DATASOURCE_PASSWORD: root
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.POSTGRES_PASSWORD || 'test_password' }}
+          JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY || 'test_jwt_key_for_ci_testing_only_min_256_bits_required' }}
 
   frontend-ci:
     runs-on: ubuntu-latest
@@ -61,11 +62,15 @@ jobs:
         working-directory: ./frontend
         run: npm ci --legacy-peer-deps
 
+      - name: Lint Frontend
+        working-directory: ./frontend
+        run: npm run lint --if-present
+
       - name: Build Frontend
         working-directory: ./frontend
         run: npm run build
 
-  # This job will build and push Docker images after successful tests on the main branch
+  # Build and push Docker images on main branch
   docker-build:
     needs: [backend-ci, frontend-ci]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
@@ -94,6 +99,8 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository_owner }}/ecommerce-backend:latest
             ghcr.io/${{ github.repository_owner }}/ecommerce-backend:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       - name: Build and Push Frontend Image
         uses: docker/build-push-action@v5
@@ -103,3 +110,5 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository_owner }}/ecommerce-frontend:latest
             ghcr.io/${{ github.repository_owner }}/ecommerce-frontend:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

@@ -1,21 +1,26 @@
 package com.ecommerce.backend.auth;
+
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * Data Transfer Object for authentication requests.
+ * Contains the user's email and password with validation constraints.
+ */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthenticationRequest {
 
-
-     /**
-     * A data transfer object (DTO) representing an authentication request.
-     * Contains the user's email and password.
-     */
-
+    @NotBlank(message = "Email is required")
+    @Email(message = "Please provide a valid email address")
     private String email;
+
+    @NotBlank(message = "Password is required")
     private String password;
 }
