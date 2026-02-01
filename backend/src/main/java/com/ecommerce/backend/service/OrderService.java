@@ -106,4 +106,50 @@ public class OrderService {
         public List<Order> getAllOrders() {
                 return orderRepository.findAllByOrderByCreatedAtDesc();
         }
+
+        /**
+         * Update the status of an existing order.
+         * Creates a notification for the order's user about the status change.
+         *
+         * @param orderId   The ID of the order to update
+         * @param newStatus The new status to set
+         * @return The updated order
+         * @throws EntityNotFoundException if the order is not found
+         */
+        @Transactional
+        public Order updateOrderStatus(Long orderId, Order.OrderStatus newStatus) {
+                Order order = orderRepository.findById(orderId)
+                                .orElseThrow(() -> new EntityNotFoundException("Order not found: " + orderId));
+
+                Order.OrderStatus oldStatus = order.getStatus();
+                order.setStatus(newStatus);
+                Order savedOrder = orderRepository.save(order);
+
+                // Create notification for the user about status change
+                createStatusChangeNotification(savedOrder, oldStatus, newStatus);
+
+                log.info("Order #{} status changed from {} to {}", orderId, oldStatus, newStatus);
+                return savedOrder;
+        }
+
+        /**
+         * Creates a notification for the user when their order status changes.
+         */
+        private void createStatusChangeNotification(Order order, Order.OrderStatus oldStatus,
+                        Order.OrderStatus newStatus) {
+                String message = String.format(
+                                "Your order #%d has been updated from %s to %s.",
+                                order.getId(), oldStatus, newStatus);
+
+                Notification notification = Notification.builder()
+                                .user(order.getUser())
+                                .message(message)
+                                .type("ORDER_STATUS_UPDATE")
+                                .targetId(order.getId())
+                                .isRead(false)
+                                .build();
+
+                notificationRepository.save(notification);
+                log.info("User notification created for Order #{} status change", order.getId());
+        }
 }

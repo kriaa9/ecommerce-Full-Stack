@@ -1,13 +1,5 @@
 import { useState } from "react"; // Import hooks
-import {
-  BrowserRouter as Router,
-  Link,
-  Navigate,
-  Route,
-  Routes,
-  useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { BrowserRouter as Router, Link, Navigate, Route, Routes, useLocation, useNavigate,} from "react-router-dom";
 import Login from "./auth/login/Login";
 import Register from "./auth/register/Register";
 import Profile from "./profile/Profile";
@@ -23,6 +15,7 @@ import ProductCatalog from "./catalog/ProductCatalog";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import MyOrdersPage from "./pages/MyOrdersPage";
+import UserNotificationsPage from "./pages/UserNotificationsPage";
 import OrderSuccessPage from "./pages/OrderSuccessPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
@@ -56,56 +49,21 @@ function Navigation() {
   return (
     <nav className="navbar">
       <div className="nav-container">
-        <Link
-          to="/"
-          className="nav-logo"
-          onClick={() => setIsMobileMenuOpen(false)}
-        >
-          E-SHOP
-        </Link>
-
-        <button
-          className="mobile-menu-toggle"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label="Toggle menu"
-        >
-          {isMobileMenuOpen ? "✕" : "☰"}
-        </button>
+        <Link to="/" className="nav-logo" onClick={() => setIsMobileMenuOpen(false)}> E-SHOP </Link>
+        <button className="mobile-menu-toggle" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} aria-label="Toggle menu"> {isMobileMenuOpen ? "✕" : "☰"} </button>
 
         <div className={`nav-links ${isMobileMenuOpen ? "mobile-open" : ""}`}>
-          <Link
-            to="/"
-            className="nav-link"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            Home
-          </Link>
-          <Link
-            to="/products"
-            className="nav-link"
-            onClick={() => setIsMobileMenuOpen(false)}
-          >
-            Products
-          </Link>
+          <Link to="/" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}> Home </Link>
+          <Link to="/products" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}> Products </Link>
 
           {!isAdmin && ( // Conditionally render Cart link
-            <Link
-              to="/cart"
-              className="nav-link cart-link"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              Cart{" "}
-              {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
-            </Link>
+            <Link to="/cart" className="nav-link cart-link" onClick={() => setIsMobileMenuOpen(false)}> Cart {cartCount > 0 && <span className="cart-badge">{cartCount}</span>} </Link>
           )}
 
           {isAuthenticated ? (
             /* --- LOGGED IN: SHOW USER DROPDOWN --- */
             <div className="user-menu-container">
-              <button
-                className="user-avatar-btn"
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              >
+              <button className="user-avatar-btn" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
                 <div className="avatar-circle">U</div>
                 {/* Placeholder Initial */}
                 <span className="user-name">My Account</span>
@@ -114,55 +72,19 @@ function Navigation() {
 
               {isDropdownOpen && (
                 <div className="dropdown-menu">
-                  <Link
-                    to="/profile"
-                    className="dropdown-item"
-                    onClick={() => setIsDropdownOpen(false)}
-                  >
-                    My Profile
-                  </Link>
-                  <Link
-                    to="/orders"
-                    className="dropdown-item"
-                    onClick={() => setIsDropdownOpen(false)}
-                  >
-                    Orders
-                  </Link>
-                  {isAdmin && (
-                    <Link
-                      to="/admin"
-                      className="dropdown-item"
-                      onClick={() => setIsDropdownOpen(false)}
-                    >
-                      Admin Panel
-                    </Link>
-                  )}
-                  <button
-                    onClick={handleLogout}
-                    className="dropdown-item logout"
-                  >
-                    Sign Out
-                  </button>
+                  <Link to="/profile" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}> My Profile </Link>
+                  {!isAdmin && (<Link to="/orders" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}> Orders </Link>)}
+                  {!isAdmin && (<Link to="/notifications" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}> 🔔 Notifications </Link>)}
+                  {isAdmin && (<Link to="/admin" className="dropdown-item" onClick={() => setIsDropdownOpen(false)}> Admin Panel </Link>)}
+                  <button  onClick={handleLogout} className="dropdown-item logout"> Sign Out</button>
                 </div>
               )}
             </div>
           ) : (
             /* --- LOGGED OUT: SHOW LOGIN BUTTONS --- */
             <div className="nav-auth-links">
-              <Link
-                to="/login"
-                className="nav-link btn-login"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Login
-              </Link>
-              <Link
-                to="/register"
-                className="nav-link btn-register"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                Register
-              </Link>
+              <Link to="/login" className="nav-link btn-login" onClick={() => setIsMobileMenuOpen(false)}> Login </Link>
+              <Link to="/register" className="nav-link btn-register"onClick={() => setIsMobileMenuOpen(false)}>Register</Link>
             </div>
           )}
         </div>
@@ -179,24 +101,10 @@ function App() {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>}/>
 
           {/* --- ADMIN ROUTES --- */}
-          <Route
-            path="/admin"
-            element={
-              <AdminRoute>
-                <AdminLayout />
-              </AdminRoute>
-            }
-          >
+          <Route path="/admin" element={<AdminRoute><AdminLayout /></AdminRoute>}>
             <Route index element={<Navigate to="dashboard" replace />} />
             <Route path="dashboard" element={<AdminDashboard />} />
             <Route path="notifications" element={<AdminNotificationsPage />} />
@@ -210,45 +118,19 @@ function App() {
           </Route>
 
           {/* --- USER ROUTES --- */}
-          <Route
-            path="/orders"
-            element={
-              <ProtectedRoute>
-                <MyOrdersPage />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/order-success"
-            element={
-              <ProtectedRoute>
-                <OrderSuccessPage />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/orders" element={<ProtectedRoute><MyOrdersPage /></ProtectedRoute>}/>
+          <Route path="/notifications" element={<ProtectedRoute><UserNotificationsPage /></ProtectedRoute>}/>
+          <Route path="/order-success" element={<ProtectedRoute><OrderSuccessPage /></ProtectedRoute>}/>
 
           <Route path="/products" element={<ProductCatalog />} />
           <Route path="/cart" element={<CartPage />} />
-          <Route
-            path="/checkout"
-            element={
-              <ProtectedRoute>
-                <CheckoutPage />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>}/>
 
-          <Route
-            path="/"
-            element={
-              <div
-                className="home-container"
-                style={{ padding: "2rem", textAlign: "center" }}
-              >
+          <Route path="/" element={
+              <div className="home-container" style={{ padding: "2rem", textAlign: "center" }}>
                 <h1>Welcome to E-Shop</h1>
                 <p>Your premium shopping destination.</p>
-              </div>
-            }
+              </div>}
           />
         </Routes>
       </Router>

@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller for admin/system-wide notifications.
+ * These are notifications without a specific user (user is null).
+ */
 @RestController
 @RequestMapping("/api/v1/admin/notifications")
 @RequiredArgsConstructor
@@ -17,16 +21,25 @@ public class AdminNotificationController {
 
     private final NotificationRepository notificationRepository;
 
+    /**
+     * Get all system-wide notifications (for admins).
+     */
     @GetMapping
     public ResponseEntity<List<Notification>> getAllNotifications() {
-        return ResponseEntity.ok(notificationRepository.findAllByOrderByCreatedAtDesc());
+        return ResponseEntity.ok(notificationRepository.findByUserIsNullOrderByCreatedAtDesc());
     }
 
+    /**
+     * Get count of unread system-wide notifications.
+     */
     @GetMapping("/unread-count")
     public ResponseEntity<Long> getUnreadCount() {
-        return ResponseEntity.ok(notificationRepository.countByIsReadFalse());
+        return ResponseEntity.ok(notificationRepository.countByUserIsNullAndIsReadFalse());
     }
 
+    /**
+     * Mark a system-wide notification as read.
+     */
     @PatchMapping("/{id}/read")
     public ResponseEntity<Void> markAsRead(@PathVariable Long id) {
         notificationRepository.findById(id).ifPresent(n -> {

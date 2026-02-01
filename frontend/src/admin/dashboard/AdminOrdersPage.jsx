@@ -2,9 +2,17 @@ import { useState, useEffect } from 'react';
 import orderService from '../../api/orderService';
 import './AdminOrders.css';
 
+/**
+ * Admin Orders Page - Displays all customer orders with status management.
+ * Admins can view order details and update order statuses.
+ */
 const AdminOrdersPage = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [updatingOrderId, setUpdatingOrderId] = useState(null);
+
+    // Available order statuses
+    const ORDER_STATUSES = ['PENDING', 'PROCESSING', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
 
     const formatDate = (dateValue) => {
         if (!dateValue) return 'N/A';
@@ -29,6 +37,26 @@ const AdminOrdersPage = () => {
             console.error('Error fetching orders:', err);
         } finally {
             setLoading(false);
+        }
+    };
+
+    /**
+     * Handle status change for an order.
+     * Updates the status via API and refreshes the order in state.
+     */
+    const handleStatusChange = async (orderId, newStatus) => {
+        try {
+            setUpdatingOrderId(orderId);
+            const updatedOrder = await orderService.updateOrderStatus(orderId, newStatus);
+            // Update the order in state
+            setOrders(prev => prev.map(order => 
+                order.id === orderId ? { ...order, status: updatedOrder.status } : order
+            ));
+        } catch (err) {
+            console.error('Error updating order status:', err);
+            alert('Failed to update order status. Please try again.');
+        } finally {
+            setUpdatingOrderId(null);
         }
     };
 
@@ -97,9 +125,17 @@ const AdminOrdersPage = () => {
                                     </td>
                                     <td className="total-cell">${order.totalAmount.toFixed(2)}</td>
                                     <td>
-                                        <span className={`status-badge ${order.status.toLowerCase()}`}>
-                                            {order.status}
-                                        </span>
+                                        {/* Status dropdown for admin to change order status */}
+                                        <select
+                                            className={`status-select ${order.status.toLowerCase()}`}
+                                            value={order.status}
+                                            onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                                            disabled={updatingOrderId === order.id}
+                                        >
+                                            {ORDER_STATUSES.map(status => (
+                                                <option key={status} value={status}>{status}</option>
+                                            ))}
+                                        </select>
                                     </td>
                                     <td>{formatDate(order.createdAt)}</td>
                                 </tr>
