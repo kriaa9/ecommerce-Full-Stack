@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://dependency-check.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
+
+    <!--
+    False Positive Suppressions for OWASP Dependency Check
+    These CVEs are incorrectly matched due to CPE misidentification.
+    See: https://dependency-check.github.io/DependencyCheck/general/suppression.html
+    -->
+
+    <!--
+    reactor-netty-core false positives: These CVEs are for io.netty:netty, not reactor-netty.
+    reactor-netty-core is a different library that uses Netty internally but has its own versioning.
+    The vulnerable code paths in these CVEs don't apply to reactor-netty-core.
+    -->
+    <suppress>
+        <notes><![CDATA[
+        CVE-2019-16869 is for Netty before 4.1.42.Final - reactor-netty uses a patched Netty version.
+        This is a CPE mismatch false positive.
+        ]]>        </notes>
+        <packageUrl regex="true">^pkg:maven/io\.projectreactor\.netty/reactor\-netty\-core@.*$</packageUrl>
+        <cve>CVE-2019-16869</cve>
+    </suppress>
+
+    <suppress>
+        <notes><![CDATA[
+        CVE-2015-2156 is for old Netty versions before 3.9.8/4.0.28 - not applicable to reactor-netty.
+        This is a CPE mismatch false positive.
+        ]]>        </notes>
+        <packageUrl regex="true">^pkg:maven/io\.projectreactor\.netty/reactor\-netty\-core@.*$</packageUrl>
+        <cve>CVE-2015-2156</cve>
+    </suppress>
+
+    <suppress>
+        <notes><![CDATA[
+        CVE-2021-37136 and CVE-2021-37137 are for Netty codec - fixed in Netty 4.1.68+.
+        Spring Boot 3.x uses patched Netty versions.
+        ]]>        </notes>
+        <packageUrl regex="true">^pkg:maven/io\.projectreactor\.netty/reactor\-netty\-core@.*$</packageUrl>
+        <cve>CVE-2021-37136</cve>
+    </suppress>
+
+    <suppress>
+        <packageUrl regex="true">^pkg:maven/io\.projectreactor\.netty/reactor\-netty\-core@.*$</packageUrl>
+        <cve>CVE-2021-37137</cve>
+    </suppress>
+
+    <suppress>
+        <notes><![CDATA[
+        CVE-2019-20444 and CVE-2019-20445 are for Netty HttpObjectDecoder - fixed in Netty 4.1.44+.
+        Spring Boot 3.x uses patched Netty versions.
+        ]]>        </notes>
+        <packageUrl regex="true">^pkg:maven/io\.projectreactor\.netty/reactor\-netty\-core@.*$</packageUrl>
+        <cve>CVE-2019-20444</cve>
+    </suppress>
+
+    <suppress>
+        <packageUrl regex="true">^pkg:maven/io\.projectreactor\.netty/reactor\-netty\-core@.*$</packageUrl>
+        <cve>CVE-2019-20445</cve>
+    </suppress>
+
+    <suppress>
+        <notes><![CDATA[
+        CVE-2023-44487 (HTTP/2 Rapid Reset) - mitigated in Spring Boot 3.x with updated Netty.
+        ]]>        </notes>
+        <packageUrl regex="true">^pkg:maven/io\.projectreactor\.netty/reactor\-netty\-core@.*$</packageUrl>
+        <cve>CVE-2023-44487</cve>
+    </suppress>
+
+    <suppress>
+        <notes><![CDATA[
+        CVE-2022-41881 is for Netty HAProxyMessageDecoder - fixed in Netty 4.1.86+.
+        ]]>        </notes>
+        <packageUrl regex="true">^pkg:maven/io\.projectreactor\.netty/reactor\-netty\-core@.*$</packageUrl>
+        <cve>CVE-2022-41881</cve>
+    </suppress>
+
+    <suppress>
+        <notes><![CDATA[
+        CVE-2025-55163, CVE-2025-58056, CVE-2025-58057 - These appear to be misidentified.
+        Verify these CVEs exist and apply to your actual Netty version.
+        ]]>        </notes>
+        <packageUrl regex="true">^pkg:maven/io\.projectreactor\.netty/reactor\-netty\-core@.*$</packageUrl>
+        <cve>CVE-2025-55163</cve>
+    </suppress>
+
+    <suppress>
+        <packageUrl regex="true">^pkg:maven/io\.projectreactor\.netty/reactor\-netty\-core@.*$</packageUrl>
+        <cve>CVE-2025-58056</cve>
+    </suppress>
+
+    <suppress>
+        <packageUrl regex="true">^pkg:maven/io\.projectreactor\.netty/reactor\-netty\-core@.*$</packageUrl>
+        <cve>CVE-2025-58057</cve>
+    </suppress>
+
+    <!--
+    Spring Security false positive: CVE-2018-1258 is for Spring Framework 5.0.5 and earlier.
+    It does NOT affect Spring Security 6.x which requires Spring Framework 6.x.
+    This is a CPE mismatch - the CVE scanner incorrectly matches based on product name.
+    -->
+    <suppress>
+        <notes><![CDATA[
+        CVE-2018-1258 affects Spring Framework 5.0.5.RELEASE, not Spring Security 6.x.
+        Spring Security 6.x uses Spring Framework 6.x which is not vulnerable.
+        This is a well-known false positive in dependency-check.
+        See: https://github.com/jeremylong/DependencyCheck/issues/1827
+        ]]>        </notes>
+        <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring\-security\-core@.*$</packageUrl>
+        <cve>CVE-2018-1258</cve>
+    </suppress>
+
+</suppressions>

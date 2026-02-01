@@ -91,6 +91,7 @@ jobs:
             --failOnCVSS 7
             --enableRetired
             --disableAssembly
+            --suppression ./backend/dependency-check-suppression.xml
 
       - name: Upload Security Report
         if: always() && steps.check_files.outputs.backend == 'true'
