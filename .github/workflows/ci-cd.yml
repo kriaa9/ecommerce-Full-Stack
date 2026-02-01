@@ -14,7 +14,6 @@ on:
       - '.gitignore'
       - 'docs/**'
 
-# Prevent multiple runs of the same workflow on same branch from running simultaneously
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -24,7 +23,6 @@ jobs:
   backend-ci:
     name: ☕ Backend Build & Test
     runs-on: ubuntu-latest
-    # Only run if backend files or root config changed
     if: |
       github.event_name == 'pull_request' || 
       contains(github.event.head_commit.message, '[skip ci]') == false
@@ -77,6 +75,26 @@ jobs:
           SPRING_DATASOURCE_PASSWORD: ${{ secrets.POSTGRES_PASSWORD || 'test_password' }}
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY || 'test_jwt_key_for_ci_testing_only_min_256_bits_required' }}
 
+      # --- NEW: OWASP Dependency Check ---
+      - name: OWASP Dependency Check
+        if: steps.check_files.outputs.backend == 'true'
+        uses: dependency-check/dependency-check-action@v2
+        with:
+          project: 'ecommerce-backend'
+          path: './backend'
+          format: 'HTML'
+          out: 'reports'
+          args: >
+            --failOnCVSS 7
+            --enableRetired
+
+      - name: Upload Security Report
+        if: always() && steps.check_files.outputs.backend == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: dependency-check-report
+          path: reports
+
   # --- Frontend CI Job ---
   frontend-ci:
     name: ⚛️ Frontend Build & Test
@@ -123,13 +141,14 @@ jobs:
 
   # --- Docker Build Job ---
   docker-build:
-    name: 🐳 Docker Release
+    name: 🐳 Docker Release & Scan
     needs: [backend-ci, frontend-ci]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
+      security-events: write # Required for uploading Trivy results
     steps:
       - uses: actions/checkout@v4
 
@@ -143,30 +162,50 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and Push Backend Image
+      # Build images first (load into Docker local daemon for scanning)
+      - name: Build Backend Image
         uses: docker/build-push-action@v5
         with:
           context: ./backend
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/ecommerce-backend:latest
-            ghcr.io/${{ github.repository_owner }}/ecommerce-backend:${{ github.sha }}
-            ghcr.io/${{ github.repository_owner }}/ecommerce-backend:main
+          load: true
+          tags: ecommerce-backend:scan
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          labels: |
-            org.opencontainers.image.source=https://github.com/${{ github.repository }}
 
-      - name: Build and Push Frontend Image
+      - name: Build Frontend Image
         uses: docker/build-push-action@v5
         with:
           context: ./frontend
-          push: true
-          tags: |
-            ghcr.io/${{ github.repository_owner }}/ecommerce-frontend:latest
-            ghcr.io/${{ github.repository_owner }}/ecommerce-frontend:${{ github.sha }}
-            ghcr.io/${{ github.repository_owner }}/ecommerce-frontend:main
+          load: true
+          tags: ecommerce-frontend:scan
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          labels: |
-            org.opencontainers.image.source=https://github.com/${{ github.repository }}
+
+      # --- NEW: Trivy Security Scanning ---
+      - name: Run Trivy Backend Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'ecommerce-backend:scan'
+          format: 'table'
+          exit-code: '0' # Don't fail the build for now, just report
+          severity: 'CRITICAL,HIGH'
+
+      - name: Run Trivy Frontend Scan
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'ecommerce-frontend:scan'
+          format: 'table'
+          exit-code: '0'
+          severity: 'CRITICAL,HIGH'
+
+      # Finally Push the images
+      - name: Push Images to GHCR
+        run: |
+          docker tag ecommerce-backend:scan ghcr.io/${{ github.repository_owner }}/ecommerce-backend:latest
+          docker tag ecommerce-backend:scan ghcr.io/${{ github.repository_owner }}/ecommerce-backend:${{ github.sha }}
+          docker tag ecommerce-frontend:scan ghcr.io/${{ github.repository_owner }}/ecommerce-frontend:latest
+          docker tag ecommerce-frontend:scan ghcr.io/${{ github.repository_owner }}/ecommerce-frontend:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository_owner }}/ecommerce-backend:latest
+          docker push ghcr.io/${{ github.repository_owner }}/ecommerce-backend:${{ github.sha }}
+          docker push ghcr.io/${{ github.repository_owner }}/ecommerce-frontend:latest
+          docker push ghcr.io/${{ github.repository_owner }}/ecommerce-frontend:${{ github.sha }}
