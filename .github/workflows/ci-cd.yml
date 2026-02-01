@@ -3,12 +3,31 @@ name: CI/CD Pipeline
 on:
   push:
     branches: [ main, dev ]
+    paths-ignore:
+      - 'README.md'
+      - '.gitignore'
+      - 'docs/**'
   pull_request:
     branches: [ main, dev ]
+    paths-ignore:
+      - 'README.md'
+      - '.gitignore'
+      - 'docs/**'
+
+# Prevent multiple runs of the same workflow on same branch from running simultaneously
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
+  # --- Backend CI Job ---
   backend-ci:
+    name: ☕ Backend Build & Test
     runs-on: ubuntu-latest
+    # Only run if backend files or root config changed
+    if: |
+      github.event_name == 'pull_request' || 
+      contains(github.event.head_commit.message, '[skip ci]') == false
     services:
       postgres:
         image: postgres:16-alpine
@@ -33,11 +52,23 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Check Backend Changes
+        id: check_files
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+              - 'pom.xml'
+              - '.github/workflows/**'
+
       - name: Make mvnw executable
+        if: steps.check_files.outputs.backend == 'true'
         working-directory: ./backend
         run: chmod +x mvnw
 
       - name: Build and Test Backend
+        if: steps.check_files.outputs.backend == 'true'
         working-directory: ./backend
         run: ./mvnw clean install -DskipTests=false
         env:
@@ -46,12 +77,24 @@ jobs:
           SPRING_DATASOURCE_PASSWORD: ${{ secrets.POSTGRES_PASSWORD || 'test_password' }}
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY || 'test_jwt_key_for_ci_testing_only_min_256_bits_required' }}
 
+  # --- Frontend CI Job ---
   frontend-ci:
+    name: ⚛️ Frontend Build & Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check Frontend Changes
+        id: check_files
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            frontend:
+              - 'frontend/**'
+              - '.github/workflows/**'
+
       - name: Set up Node.js
+        if: steps.check_files.outputs.frontend == 'true'
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -59,19 +102,28 @@ jobs:
           cache-dependency-path: './frontend/package-lock.json'
 
       - name: Install Dependencies
+        if: steps.check_files.outputs.frontend == 'true'
         working-directory: ./frontend
         run: npm ci --legacy-peer-deps
 
+      - name: Security Audit
+        if: steps.check_files.outputs.frontend == 'true'
+        working-directory: ./frontend
+        run: npm audit --audit-level=high
+
       - name: Lint Frontend
+        if: steps.check_files.outputs.frontend == 'true'
         working-directory: ./frontend
         run: npm run lint --if-present
 
       - name: Build Frontend
+        if: steps.check_files.outputs.frontend == 'true'
         working-directory: ./frontend
         run: npm run build
 
-  # Build and push Docker images on main branch
+  # --- Docker Build Job ---
   docker-build:
+    name: 🐳 Docker Release
     needs: [backend-ci, frontend-ci]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
@@ -99,8 +151,11 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository_owner }}/ecommerce-backend:latest
             ghcr.io/${{ github.repository_owner }}/ecommerce-backend:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/ecommerce-backend:main
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
 
       - name: Build and Push Frontend Image
         uses: docker/build-push-action@v5
@@ -110,5 +165,8 @@ jobs:
           tags: |
             ghcr.io/${{ github.repository_owner }}/ecommerce-frontend:latest
             ghcr.io/${{ github.repository_owner }}/ecommerce-frontend:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner }}/ecommerce-frontend:main
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          labels: |
+            org.opencontainers.image.source=https://github.com/${{ github.repository }}
