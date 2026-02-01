@@ -26,20 +26,7 @@ jobs:
     if: |
       github.event_name == 'pull_request' ||
       contains(github.event.head_commit.message, '[skip ci]') == false
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_DB: ecommerce
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD || 'test_password' }}
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+    # Using Supabase cloud PostgreSQL - no local container needed
     steps:
       - uses: actions/checkout@v4
 
@@ -70,9 +57,10 @@ jobs:
         working-directory: ./backend
         run: ./mvnw clean install -DskipTests=false
         env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/ecommerce
-          SPRING_DATASOURCE_USERNAME: postgres
-          SPRING_DATASOURCE_PASSWORD: ${{ secrets.POSTGRES_PASSWORD || 'test_password' }}
+          # Supabase PostgreSQL connection
+          SPRING_DATASOURCE_URL: ${{ secrets.SUPABASE_DB_URL }}
+          SPRING_DATASOURCE_USERNAME: ${{ secrets.SUPABASE_DB_USER }}
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY || 'test_jwt_key_for_ci_testing_only_min_256_bits_required' }}
 
       # --- OWASP Dependency Check ---
