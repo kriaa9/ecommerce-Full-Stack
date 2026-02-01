@@ -50,9 +50,6 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Export JAVA_HOME
-        run: echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
-
       - name: Check Backend Changes
         id: check_files
         uses: dorny/paths-filter@v3
@@ -73,16 +70,18 @@ jobs:
         working-directory: ./backend
         run: ./mvnw clean install -DskipTests=false
         env:
-          JAVA_HOME: ${{ env.JAVA_HOME }}
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/ecommerce
           SPRING_DATASOURCE_USERNAME: postgres
           SPRING_DATASOURCE_PASSWORD: ${{ secrets.POSTGRES_PASSWORD || 'test_password' }}
           JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY || 'test_jwt_key_for_ci_testing_only_min_256_bits_required' }}
 
-      # --- FIXED: OWASP Dependency Check (using exact official casing) ---
+      # --- OWASP Dependency Check ---
       - name: OWASP Dependency Check
         if: steps.check_files.outputs.backend == 'true'
         uses: dependency-check/Dependency-Check_Action@main
+        env:
+          # Override JAVA_HOME to use the container's bundled Java (prevents host path conflict)
+          JAVA_HOME: /opt/jdk
         with:
           project: 'ecommerce-backend'
           path: './backend'
