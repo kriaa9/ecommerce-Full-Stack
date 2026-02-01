@@ -153,12 +153,30 @@ The GitHub Actions workflow (`.github/workflows/ci-cd.yml`) runs on every push/P
 - Docker & Docker Compose
 - Git
 
+### Environment Setup
+
+Before running the application, you need to configure environment variables:
+
+```bash
+# Copy the example environment file
+cp .env.example .env
+
+# Edit .env and set required values:
+# - POSTGRES_PASSWORD (required)
+# - JWT_SECRET_KEY (required) - generate with: openssl rand -base64 64
+# - CLOUDINARY_* (optional, for image uploads)
+```
+
 ### Run Locally
 
 ```bash
 # Clone the repository
 git clone <repository-url>
 cd ecommerce
+
+# Set up environment variables (see above)
+cp .env.example .env
+# Edit .env with your values
 
 # Start all services
 docker-compose up -d
@@ -196,6 +214,7 @@ ecommerce/
 │   └── provisioning/
 │       └── datasources/
 │           └── datasource.yml     # Pre-configured Prometheus & Loki
+├── .env.example                   # Environment variables template
 ├── docker-compose.yml             # Full stack orchestration
 ├── prometheus.yml                 # Prometheus scrape configuration
 ├── promtail-config.yml            # Promtail log collection config
@@ -206,10 +225,14 @@ ecommerce/
 
 ## 🔐 Security Features
 
+- **Environment-based secrets**: All sensitive values (JWT keys, DB passwords, API keys) are configured via environment variables
 - **Non-root containers**: Both backend and frontend run as `appuser`
 - **Health checks**: All critical services have health checks
 - **Multi-stage builds**: Smaller, more secure production images
 - **Alpine-based images**: Minimal attack surface
+- **Input validation**: All API endpoints validate input data
+- **CORS configuration**: Configurable allowed origins for production
+- **Pinned image versions**: Monitoring stack uses specific versions for reproducibility
 
 ---
 
