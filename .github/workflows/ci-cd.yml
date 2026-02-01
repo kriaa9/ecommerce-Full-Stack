@@ -50,6 +50,9 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
+      - name: Export JAVA_HOME
+        run: echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
+
       - name: Check Backend Changes
         id: check_files
         uses: dorny/paths-filter@v3
