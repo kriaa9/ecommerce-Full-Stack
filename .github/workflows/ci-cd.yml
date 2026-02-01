@@ -83,6 +83,9 @@ jobs:
       - name: OWASP Dependency Check
         if: steps.check_files.outputs.backend == 'true'
         uses: dependency-check/Dependency-Check_Action@main
+        env:
+          # Force the container to use its own internal Java, ignoring the host's JAVA_HOME
+          JAVA_HOME: ""
         with:
           project: 'ecommerce-backend'
           path: './backend'
