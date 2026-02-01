@@ -78,7 +78,7 @@ jobs:
       # --- FIXED: OWASP Dependency Check (using exact official casing) ---
       - name: OWASP Dependency Check
         if: steps.check_files.outputs.backend == 'true'
-        uses: dependency-check/Dependency-Check_Action@v11.1.1
+        uses: dependency-check/Dependency-Check_Action@main
         with:
           project: 'ecommerce-backend'
           path: './backend'
