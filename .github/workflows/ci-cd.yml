@@ -70,6 +70,7 @@ jobs:
         working-directory: ./backend
         run: ./mvnw clean install -DskipTests=false
         env:
+          JAVA_HOME: ${{ env.JAVA_HOME }}
           SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/ecommerce
           SPRING_DATASOURCE_USERNAME: postgres
           SPRING_DATASOURCE_PASSWORD: ${{ secrets.POSTGRES_PASSWORD || 'test_password' }}
