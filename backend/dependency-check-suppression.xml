@@ -3,11 +3,11 @@
 
     <!--
     False Positive Suppressions for OWASP Dependency Check
-    
+
     These CVEs are incorrectly matched due to CPE misidentification:
     - reactor-netty-core is matched to cpe:2.3:a:netty:netty (wrong - it's a different library)
     - spring-security-core is matched to old Spring Framework CVEs
-    
+
     See: https://dependency-check.github.io/DependencyCheck/general/suppression.html
     -->
 
@@ -28,7 +28,7 @@
         reactor-netty-core uses Netty internally but is a separate library.
         The vulnerable code in these CVEs is in io.netty:netty, not reactor-netty.
         Spring Boot 3.5.x includes patched versions of Netty (4.1.x).
-        ]]></notes>
+        ]]>        </notes>
         <filePath regex="true">.*reactor-netty-core.*\.jar</filePath>
         <cpe>cpe:/a:netty:netty</cpe>
     </suppress>
@@ -38,7 +38,7 @@
         <notes><![CDATA[
         CVE-2019-16869: HTTP request smuggling in Netty before 4.1.42.Final.
         Not applicable to reactor-netty which uses patched Netty version.
-        ]]></notes>
+        ]]>        </notes>
         <filePath regex="true">.*reactor-netty.*\.jar</filePath>
         <cve>CVE-2019-16869</cve>
     </suppress>
@@ -47,7 +47,7 @@
         <notes><![CDATA[
         CVE-2015-2156: Netty before 3.9.8/4.0.28 - ancient vulnerability.
         Not applicable to current reactor-netty versions.
-        ]]></notes>
+        ]]>        </notes>
         <filePath regex="true">.*reactor-netty.*\.jar</filePath>
         <cve>CVE-2015-2156</cve>
     </suppress>
@@ -56,7 +56,7 @@
         <notes><![CDATA[
         CVE-2021-37136, CVE-2021-37137: Bzip2/Snappy decompression in Netty.
         Fixed in Netty 4.1.68+. Spring Boot 3.x uses patched versions.
-        ]]></notes>
+        ]]>        </notes>
         <filePath regex="true">.*reactor-netty.*\.jar</filePath>
         <cve>CVE-2021-37136</cve>
     </suppress>
@@ -70,7 +70,7 @@
         <notes><![CDATA[
         CVE-2019-20444, CVE-2019-20445: HttpObjectDecoder issues in Netty.
         Fixed in Netty 4.1.44+. Spring Boot 3.x uses patched versions.
-        ]]></notes>
+        ]]>        </notes>
         <filePath regex="true">.*reactor-netty.*\.jar</filePath>
         <cve>CVE-2019-20444</cve>
     </suppress>
@@ -84,7 +84,7 @@
         <notes><![CDATA[
         CVE-2023-44487: HTTP/2 Rapid Reset Attack.
         Mitigated in Spring Boot 3.x with updated Netty and Tomcat.
-        ]]></notes>
+        ]]>        </notes>
         <filePath regex="true">.*reactor-netty.*\.jar</filePath>
         <cve>CVE-2023-44487</cve>
     </suppress>
@@ -93,7 +93,7 @@
         <notes><![CDATA[
         CVE-2022-41881: HAProxyMessageDecoder stack overflow in Netty.
         Fixed in Netty 4.1.86+. Spring Boot 3.x uses patched versions.
-        ]]></notes>
+        ]]>        </notes>
         <filePath regex="true">.*reactor-netty.*\.jar</filePath>
         <cve>CVE-2022-41881</cve>
     </suppress>
@@ -102,7 +102,7 @@
         <notes><![CDATA[
         CVE-2025-55163, CVE-2025-58056, CVE-2025-58057: Future CVEs.
         These are false positives due to incorrect CPE matching.
-        ]]></notes>
+        ]]>        </notes>
         <filePath regex="true">.*reactor-netty.*\.jar</filePath>
         <cve>CVE-2025-55163</cve>
     </suppress>
@@ -131,7 +131,7 @@
         CVE-2018-1258: Authorization bypass in Spring Framework 5.0.5 and earlier.
         This does NOT affect Spring Security 6.x which requires Spring Framework 6.x.
         False positive due to CPE matching cpe:2.3:a:pivotal_software:spring_security.
-        ]]></notes>
+        ]]>        </notes>
         <filePath regex="true">.*spring-security-core.*\.jar</filePath>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
     </suppress>
@@ -140,7 +140,7 @@
         <notes><![CDATA[
         CVE-2018-1258 is NOT applicable to Spring Security 6.x.
         See: https://github.com/jeremylong/DependencyCheck/issues/1827
-        ]]></notes>
+        ]]>        </notes>
         <filePath regex="true">.*spring-security.*\.jar</filePath>
         <cve>CVE-2018-1258</cve>
     </suppress>
@@ -156,7 +156,7 @@
     <suppress>
         <notes><![CDATA[
         Suppress Netty CVEs for embedded reactor-netty in main JAR.
-        ]]></notes>
+        ]]>        </notes>
         <filePath regex="true">.*ecommerce-backend.*\.jar</filePath>
         <cpe>cpe:/a:netty:netty</cpe>
     </suppress>
@@ -164,7 +164,7 @@
     <suppress>
         <notes><![CDATA[
         Suppress Spring Security false positives in main JAR.
-        ]]></notes>
+        ]]>        </notes>
         <filePath regex="true">.*ecommerce-backend.*\.jar</filePath>
         <cpe>cpe:/a:pivotal_software:spring_security</cpe>
     </suppress>
