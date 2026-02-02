@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import orderService from '../api/orderService';
+import logger from '../utils/logger';
 import './CheckoutPage.css';
 
 const CheckoutPage = () => {
@@ -41,7 +42,7 @@ const CheckoutPage = () => {
             clearCart();
             navigate('/order-success');
         } catch (err) {
-            console.error('Checkout error:', err);
+            logger.error('Checkout error:', err);
             setError(err.response?.data?.message || 'Failed to place order. Please check stock availability.');
         } finally {
             setSubmitting(false);

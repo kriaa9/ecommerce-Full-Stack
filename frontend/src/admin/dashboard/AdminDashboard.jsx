@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import adminService from '../../api/adminService';
 import orderService from '../../api/orderService';
+import logger from '../../utils/logger';
 import { Link } from 'react-router-dom';
 
 /**
@@ -28,7 +29,7 @@ const AdminDashboard = () => {
                 setStats(statsData);
                 setRecentOrders(ordersData.slice(0, 5)); // Show only latest 5
             } catch (err) {
-                console.error('Error fetching dashboard data:', err);
+                logger.error('Error fetching dashboard data:', err);
             } finally {
                 setLoading(false);
             }

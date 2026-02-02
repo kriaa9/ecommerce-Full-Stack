@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import orderService from '../../api/orderService';
+import logger from '../../utils/logger';
 import './AdminOrders.css';
 
 /**
@@ -31,10 +32,10 @@ const AdminOrdersPage = () => {
         try {
             setLoading(true);
             const data = await orderService.getAllOrders();
-            console.log('Admin Orders - Received Data:', data);
+            // Orders loaded successfully
             setOrders(data);
         } catch (err) {
-            console.error('Error fetching orders:', err);
+            logger.error('Error fetching orders:', err);
         } finally {
             setLoading(false);
         }
@@ -53,7 +54,7 @@ const AdminOrdersPage = () => {
                 order.id === orderId ? { ...order, status: updatedOrder.status } : order
             ));
         } catch (err) {
-            console.error('Error updating order status:', err);
+            logger.error('Error updating order status:', err);
             alert('Failed to update order status. Please try again.');
         } finally {
             setUpdatingOrderId(null);

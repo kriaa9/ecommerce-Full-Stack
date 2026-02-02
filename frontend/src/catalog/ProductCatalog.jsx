@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import productService from '../api/productService';
 import authService from '../api/authService';
 import { useCart } from '../context/CartContext';
+import logger from '../utils/logger';
 import './ProductCatalog.css';
 
 const ProductCatalog = () => {
@@ -25,7 +26,7 @@ const ProductCatalog = () => {
           productService.getCategories()
         ]);
         
-        console.log('Public Catalog - Products Received:', productsData);
+        // Products loaded successfully
         setProducts(productsData);
         setFilteredProducts(productsData);
         setCategories(Array.isArray(categoriesData) ? categoriesData : []);
@@ -38,7 +39,7 @@ const ProductCatalog = () => {
         
         setError(null);
       } catch (err) {
-        console.error('Error fetching catalog data:', err);
+        logger.error('Error fetching catalog data:', err);
         setError('Failed to load products. Please try again later.');
       } finally {
         setLoading(false);

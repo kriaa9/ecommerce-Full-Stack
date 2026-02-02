@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import orderService from '../api/orderService';
+import logger from '../utils/logger';
 import './MyOrdersPage.css';
 
 const MyOrdersPage = () => {
@@ -15,7 +16,7 @@ const MyOrdersPage = () => {
                 const data = await orderService.getMyOrders();
                 setOrders(data);
             } catch (err) {
-                console.error('Error fetching my orders:', err);
+                logger.error('Error fetching my orders:', err);
             } finally {
                 setLoading(false);
             }

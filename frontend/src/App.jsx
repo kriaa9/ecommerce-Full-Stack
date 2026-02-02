@@ -19,6 +19,7 @@ import UserNotificationsPage from "./pages/UserNotificationsPage";
 import OrderSuccessPage from "./pages/OrderSuccessPage";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
+import UserOnlyRoute from "./components/UserOnlyRoute";
 import authService from "./api/authService";
 import { useCart } from "./context/CartContext";
 import { CartProvider } from "./context/CartProvider";
@@ -117,14 +118,14 @@ function App() {
             <Route path="products/:id/edit" element={<ProductForm />} />
           </Route>
 
-          {/* --- USER ROUTES --- */}
-          <Route path="/orders" element={<ProtectedRoute><MyOrdersPage /></ProtectedRoute>}/>
-          <Route path="/notifications" element={<ProtectedRoute><UserNotificationsPage /></ProtectedRoute>}/>
-          <Route path="/order-success" element={<ProtectedRoute><OrderSuccessPage /></ProtectedRoute>}/>
+          {/* --- USER ROUTES (Admins cannot access) --- */}
+          <Route path="/orders" element={<UserOnlyRoute><MyOrdersPage /></UserOnlyRoute>}/>
+          <Route path="/notifications" element={<UserOnlyRoute><UserNotificationsPage /></UserOnlyRoute>}/>
+          <Route path="/order-success" element={<UserOnlyRoute><OrderSuccessPage /></UserOnlyRoute>}/>
 
           <Route path="/products" element={<ProductCatalog />} />
           <Route path="/cart" element={<CartPage />} />
-          <Route path="/checkout" element={<ProtectedRoute><CheckoutPage /></ProtectedRoute>}/>
+          <Route path="/checkout" element={<UserOnlyRoute><CheckoutPage /></UserOnlyRoute>}/>
 
           <Route path="/" element={
               <div className="home-container" style={{ padding: "2rem", textAlign: "center" }}>

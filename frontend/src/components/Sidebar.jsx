@@ -1,6 +1,7 @@
 import {NavLink} from 'react-router-dom';
 import {useState, useEffect} from 'react';
 import notificationService from '../api/notificationService';
+import logger from '../utils/logger';
 import './Sidebar.css';
 
 /**
@@ -17,7 +18,7 @@ const Sidebar = () => {
                 const data = await notificationService.getUnreadCount();
                 setUnreadCount(data);
             } catch (err) {
-                console.error('Error fetching unread count:', err);
+                logger.error('Error fetching unread count:', err);
             }
         };
         fetchUnread();
