@@ -1,23 +1,38 @@
 package com.ecommerce.backend.service;
 
-import com.ecommerce.backend.dto.OrderRequest;
-import com.ecommerce.backend.model.*;
-import com.ecommerce.backend.repository.NotificationRepository;
-import com.ecommerce.backend.repository.OrderRepository;
-import com.ecommerce.backend.repository.ProductRepository;
-import com.ecommerce.backend.repository.UserRepository;
-import jakarta.persistence.EntityNotFoundException;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.ecommerce.backend.config.CacheConfig;
+import com.ecommerce.backend.dto.OrderRequest;
+import com.ecommerce.backend.model.Notification;
+import com.ecommerce.backend.model.Order;
+import com.ecommerce.backend.model.OrderItem;
+import com.ecommerce.backend.model.Product;
+import com.ecommerce.backend.model.User;
+import com.ecommerce.backend.repository.NotificationRepository;
+import com.ecommerce.backend.repository.OrderRepository;
+import com.ecommerce.backend.repository.ProductRepository;
+import com.ecommerce.backend.repository.UserRepository;
+
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+/**
+ * Order Service with optimized queries and cache management.
+ *
+ * N+1 FIX:
+ * - Uses @EntityGraph queries to eagerly fetch User, OrderItems, and Products
+ * - Single query per operation instead of N+1 lazy loads
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -28,7 +43,15 @@ public class OrderService {
         private final UserRepository userRepository;
         private final NotificationRepository notificationRepository;
 
+        /**
+         * Place a new order.
+         *
+         * CACHE EVICTION:
+         * - Evicts dashboard stats (order count changes)
+         * - Evicts products cache (stock changes)
+         */
         @Transactional
+        @CacheEvict(value = {CacheConfig.DASHBOARD_STATS_CACHE, CacheConfig.PRODUCTS_CACHE}, allEntries = true)
         public Order placeOrder(OrderRequest request, Principal principal) {
                 User user = userRepository.findByEmail(principal.getName())
                                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -97,14 +120,30 @@ public class OrderService {
                 log.info("Admin notification created for Order ID: {}", order.getId());
         }
 
+        /**
+         * Get all orders for a user (optimized with @EntityGraph).
+         * Uses single query to fetch orders with items and products.
+         *
+         * @Transactional(readOnly = true) optimizes for read-only operations
+         */
+        @Transactional(readOnly = true)
         public List<Order> getUserOrders(Principal principal) {
                 User user = userRepository.findByEmail(principal.getName())
                                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-                return orderRepository.findByUserIdOrderByCreatedAtDesc(user.getId());
+                log.debug("Fetching orders for user: {} with eager loading", user.getId());
+                return orderRepository.findByUserIdWithItemsOrderByCreatedAtDesc(user.getId());
         }
 
+        /**
+         * Get all orders for admin (optimized with @EntityGraph).
+         * Single query fetches orders with items, products, and categories.
+         *
+         * @Transactional(readOnly = true) optimizes for read-only operations
+         */
+        @Transactional(readOnly = true)
         public List<Order> getAllOrders() {
-                return orderRepository.findAllByOrderByCreatedAtDesc();
+                log.debug("Fetching all orders with eager loading");
+                return orderRepository.findAllWithItemsOrderByCreatedAtDesc();
         }
 
         /**

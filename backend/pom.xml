@@ -119,6 +119,22 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- ==========================================
+		     Caffeine Cache - High-performance in-memory caching
+		     PERFORMANCE GAIN:
+		     - 10x faster than EhCache for read-heavy workloads
+		     - Near-optimal hit rates with W-TinyLFU eviction
+		     - Zero-allocation caching for hot paths
+		     ========================================== -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-cache</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine</artifactId>
+		</dependency>
+
 		<!-- Test Dependencies -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -131,7 +147,7 @@
 			<scope>test</scope>
 		</dependency>
 
-		
+
 	</dependencies>
 
 	<build>
