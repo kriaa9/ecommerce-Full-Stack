@@ -1,8 +1,8 @@
-import {useEffect, useState} from 'react';
-import {Link} from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import categoryService from '../../api/categoryService';
-import DataTable from '../../components/DataTable';
 import ConfirmModal from '../../components/ConfirmModal';
+import DataTable from '../../components/DataTable';
 import logger from '../../utils/logger';
 
 /**

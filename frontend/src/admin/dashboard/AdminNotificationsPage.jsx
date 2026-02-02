@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import notificationService from '../../api/notificationService';
 import logger from '../../utils/logger';
 import './AdminNotifications.css';
@@ -26,7 +26,7 @@ const AdminNotificationsPage = () => {
     const markAsRead = async (id) => {
         try {
             await notificationService.markAsRead(id);
-            setNotifications(prev => 
+            setNotifications(prev =>
                 prev.map(n => n.id === id ? { ...n, read: true } : n)
             );
         } catch (err) {

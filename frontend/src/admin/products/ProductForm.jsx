@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
-import productService from '../../api/productService';
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import categoryService from '../../api/categoryService';
+import productService from '../../api/productService';
+import ImageUpload from "../../components/ImageUpload";
 import logger from '../../utils/logger';
 import './ProductForm.css';
-import ImageUpload from "../../components/ImageUpload";
 
 /**
  * Shared Form sub-components to keep the main JSX clean and scannable.

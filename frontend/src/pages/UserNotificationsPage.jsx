@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import userNotificationService from '../api/userNotificationService';
 import logger from '../utils/logger';

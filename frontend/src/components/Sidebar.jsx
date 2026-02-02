@@ -1,5 +1,5 @@
-import {NavLink} from 'react-router-dom';
-import {useState, useEffect} from 'react';
+import { useEffect, useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import notificationService from '../api/notificationService';
 import logger from '../utils/logger';
 import './Sidebar.css';
@@ -29,7 +29,7 @@ const Sidebar = () => {
 
     return (
         <>
-            <button 
+            <button
                 className="admin-sidebar-toggle"
                 onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                 aria-label="Toggle sidebar"
@@ -38,7 +38,7 @@ const Sidebar = () => {
             </button>
 
             {isSidebarOpen && (
-                <div 
+                <div
                     className="admin-sidebar-overlay"
                     onClick={() => setIsSidebarOpen(false)}
                 />

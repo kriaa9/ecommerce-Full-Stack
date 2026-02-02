@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import productService from '../api/productService';
+import { useEffect, useState } from 'react';
 import authService from '../api/authService';
+import productService from '../api/productService';
 import { useCart } from '../context/CartContext';
 import logger from '../utils/logger';
 import './ProductCatalog.css';
@@ -25,18 +25,18 @@ const ProductCatalog = () => {
           productService.getAllProducts(),
           productService.getCategories()
         ]);
-        
+
         // Products loaded successfully
         setProducts(productsData);
         setFilteredProducts(productsData);
         setCategories(Array.isArray(categoriesData) ? categoriesData : []);
-        
+
         // Find max price for initial range
         if (productsData.length > 0) {
           const maxP = Math.max(...productsData.map(p => p.price));
           setPriceRange(prev => ({ ...prev, max: Math.ceil(maxP) }));
         }
-        
+
         setError(null);
       } catch (err) {
         logger.error('Error fetching catalog data:', err);
@@ -55,8 +55,8 @@ const ProductCatalog = () => {
     // Filter by search term
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      result = result.filter(p => 
-        p.name.toLowerCase().includes(term) || 
+      result = result.filter(p =>
+        p.name.toLowerCase().includes(term) ||
         p.description?.toLowerCase().includes(term)
       );
     }
@@ -162,8 +162,8 @@ const ProductCatalog = () => {
                   <div className="product-card-bottom">
                     <span className="product-card-price">${product.price.toFixed(2)}</span>
                     {!authService.isAdmin() && (
-                      <button 
-                        className="btn-add-cart" 
+                      <button
+                        className="btn-add-cart"
                         disabled={product.stockQuantity === 0}
                         onClick={() => addToCart(product)}
                       >

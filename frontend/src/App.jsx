@@ -1,29 +1,29 @@
 import { useState } from "react"; // Import hooks
-import { BrowserRouter as Router, Link, Navigate, Route, Routes, useLocation, useNavigate,} from "react-router-dom";
-import Login from "./auth/login/Login";
-import Register from "./auth/register/Register";
-import Profile from "./profile/Profile";
-import AdminLayout from "./admin/dashboard/AdminLayout";
+import { Link, Navigate, Route, BrowserRouter as Router, Routes, useLocation, useNavigate, } from "react-router-dom";
+import CategoryForm from "./admin/categories/CategoryForm";
+import CategoryList from "./admin/categories/CategoryList";
 import AdminDashboard from "./admin/dashboard/AdminDashboard";
+import AdminLayout from "./admin/dashboard/AdminLayout";
 import AdminNotificationsPage from "./admin/dashboard/AdminNotificationsPage";
 import AdminOrdersPage from "./admin/dashboard/AdminOrdersPage";
-import CategoryList from "./admin/categories/CategoryList";
-import CategoryForm from "./admin/categories/CategoryForm";
-import ProductList from "./admin/products/ProductList";
 import ProductForm from "./admin/products/ProductForm";
+import ProductList from "./admin/products/ProductList";
+import authService from "./api/authService";
+import "./App.css";
+import Login from "./auth/login/Login";
+import Register from "./auth/register/Register";
 import ProductCatalog from "./catalog/ProductCatalog";
+import AdminRoute from "./components/AdminRoute";
+import ProtectedRoute from "./components/ProtectedRoute";
+import UserOnlyRoute from "./components/UserOnlyRoute";
+import { useCart } from "./context/CartContext";
+import { CartProvider } from "./context/CartProvider";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import MyOrdersPage from "./pages/MyOrdersPage";
-import UserNotificationsPage from "./pages/UserNotificationsPage";
 import OrderSuccessPage from "./pages/OrderSuccessPage";
-import ProtectedRoute from "./components/ProtectedRoute";
-import AdminRoute from "./components/AdminRoute";
-import UserOnlyRoute from "./components/UserOnlyRoute";
-import authService from "./api/authService";
-import { useCart } from "./context/CartContext";
-import { CartProvider } from "./context/CartProvider";
-import "./App.css";
+import UserNotificationsPage from "./pages/UserNotificationsPage";
+import Profile from "./profile/Profile";
 
 // Separate Navigation Component
 function Navigation() {

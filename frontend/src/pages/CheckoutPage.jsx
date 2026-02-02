@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '../context/CartContext';
 import orderService from '../api/orderService';
+import { useCart } from '../context/CartContext';
 import logger from '../utils/logger';
 import './CheckoutPage.css';
 
 const CheckoutPage = () => {
     const { cart, cartTotal, clearCart } = useCart();
     const navigate = useNavigate();
-    
+
     const [formData, setFormData] = useState({
         shippingAddress: '',
         paymentMethod: 'Cash on Delivery'
@@ -38,7 +38,7 @@ const CheckoutPage = () => {
             };
 
             await orderService.placeOrder(orderRequest);
-            
+
             clearCart();
             navigate('/order-success');
         } catch (err) {
@@ -63,8 +63,8 @@ const CheckoutPage = () => {
                         <form id="checkout-form" onSubmit={handleSubmit}>
                             <div className="form-group">
                                 <label>Detailed Shipping Address</label>
-                                <textarea 
-                                    name="shippingAddress" 
+                                <textarea
+                                    name="shippingAddress"
                                     value={formData.shippingAddress}
                                     onChange={handleChange}
                                     placeholder="House No, Street, City, State, Zip Code"
@@ -72,17 +72,17 @@ const CheckoutPage = () => {
                                     rows="4"
                                 />
                             </div>
-                            
+
                             <div className="form-group">
                                 <label>Payment Method</label>
                                 <div className="payment-select">
-                                    <input 
-                                        type="radio" 
-                                        id="cod" 
-                                        name="paymentMethod" 
-                                        value="Cash on Delivery" 
-                                        checked 
-                                        readOnly 
+                                    <input
+                                        type="radio"
+                                        id="cod"
+                                        name="paymentMethod"
+                                        value="Cash on Delivery"
+                                        checked
+                                        readOnly
                                     />
                                     <label htmlFor="cod">Cash on Delivery (COD)</label>
                                 </div>
@@ -108,13 +108,13 @@ const CheckoutPage = () => {
                             <span>Total Amount</span>
                             <span className="total-price">${cartTotal.toFixed(2)}</span>
                         </div>
-                        
+
                         {error && <div className="checkout-error">{error}</div>}
-                        
-                        <button 
-                            type="submit" 
-                            form="checkout-form" 
-                            className="btn-place-order" 
+
+                        <button
+                            type="submit"
+                            form="checkout-form"
+                            className="btn-place-order"
                             disabled={submitting}
                         >
                             {submitting ? 'Processing...' : 'Place Order'}

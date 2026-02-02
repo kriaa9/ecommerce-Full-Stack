@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import orderService from '../api/orderService';
 import logger from '../utils/logger';
 import './MyOrdersPage.css';
