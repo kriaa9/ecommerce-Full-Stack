@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import orderService from '../../api/orderService';
+import logger from '../../utils/logger';
 import './AdminOrders.css';
 
 /**
@@ -16,13 +17,13 @@ const AdminOrdersPage = () => {
 
     const formatDate = (dateValue) => {
         if (!dateValue) return 'N/A';
-        
+
         // Handle array format [YYYY, M, D, H, m, s]
         if (Array.isArray(dateValue)) {
             const [year, month, day, hour = 0, minute = 0] = dateValue;
             return new Date(year, month - 1, day, hour, minute).toLocaleString();
         }
-        
+
         const date = new Date(dateValue);
         return isNaN(date.getTime()) ? 'Invalid Date' : date.toLocaleString();
     };
@@ -31,10 +32,10 @@ const AdminOrdersPage = () => {
         try {
             setLoading(true);
             const data = await orderService.getAllOrders();
-            console.log('Admin Orders - Received Data:', data);
+            // Orders loaded successfully
             setOrders(data);
         } catch (err) {
-            console.error('Error fetching orders:', err);
+            logger.error('Error fetching orders:', err);
         } finally {
             setLoading(false);
         }
@@ -49,11 +50,11 @@ const AdminOrdersPage = () => {
             setUpdatingOrderId(orderId);
             const updatedOrder = await orderService.updateOrderStatus(orderId, newStatus);
             // Update the order in state
-            setOrders(prev => prev.map(order => 
+            setOrders(prev => prev.map(order =>
                 order.id === orderId ? { ...order, status: updatedOrder.status } : order
             ));
         } catch (err) {
-            console.error('Error updating order status:', err);
+            logger.error('Error updating order status:', err);
             alert('Failed to update order status. Please try again.');
         } finally {
             setUpdatingOrderId(null);

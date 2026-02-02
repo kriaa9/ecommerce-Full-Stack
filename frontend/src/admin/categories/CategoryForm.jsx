@@ -1,6 +1,7 @@
-import {useEffect, useState} from 'react';
-import {Link, useNavigate, useParams} from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import categoryService from '../../api/categoryService';
+import logger from '../../utils/logger';
 
 /**
  * Shared Form Field sub-components for a cleaner main JSX
@@ -52,7 +53,7 @@ const CategoryForm = () => {
                     setError('Category not found');
                 }
             } catch (err) {
-                console.error('Error fetching category:', err);
+                logger.error('Error fetching category:', err);
                 setError('Failed to load category data');
             } finally {
                 setLoading(false);
@@ -85,7 +86,7 @@ const CategoryForm = () => {
             }
             navigate('/admin/categories');
         } catch (err) {
-            console.error('Error saving category:', err);
+            logger.error('Error saving category:', err);
             setError('Failed to save category. Please try again.');
         } finally {
             setSubmitting(false);

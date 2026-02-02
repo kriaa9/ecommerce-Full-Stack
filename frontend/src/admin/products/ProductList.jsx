@@ -1,8 +1,9 @@
-import {useEffect, useState} from 'react';
-import {Link} from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import productService from '../../api/productService';
-import DataTable from '../../components/DataTable';
 import ConfirmModal from '../../components/ConfirmModal';
+import DataTable from '../../components/DataTable';
+import logger from '../../utils/logger';
 
 /**
  * ProductList - Page to display all products with CRUD actions
@@ -27,7 +28,7 @@ const ProductList = () => {
             setProducts(data);
             setError(null);
         } catch (err) {
-            console.error('Error fetching products:', err);
+            logger.error('Error fetching products:', err);
             setError('Failed to load products. Please try again.');
         } finally {
             setLoading(false);
@@ -45,7 +46,7 @@ const ProductList = () => {
             setProducts(products.filter(prod => prod.id !== selectedId));
             setIsModalOpen(false);
         } catch (err) {
-            console.error('Error deleting product:', err);
+            logger.error('Error deleting product:', err);
             alert('Failed to delete product.');
         }
     };

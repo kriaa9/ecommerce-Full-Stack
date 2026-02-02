@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
-import productService from '../../api/productService';
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import categoryService from '../../api/categoryService';
-import './ProductForm.css';
+import productService from '../../api/productService';
 import ImageUpload from "../../components/ImageUpload";
+import logger from '../../utils/logger';
+import './ProductForm.css';
 
 /**
  * Shared Form sub-components to keep the main JSX clean and scannable.
@@ -103,7 +104,7 @@ const ProductForm = () => {
           }
         }
       } catch (err) {
-        console.error("Error fetching data:", err);
+        logger.error("Error fetching data:", err);
         setError("Failed to load form data");
       } finally {
         setLoading(false);
@@ -158,7 +159,7 @@ const ProductForm = () => {
       }
       navigate("/admin/products");
     } catch (err) {
-      console.error("Error saving product:", err);
+      logger.error("Error saving product:", err);
       setError("Failed to save product. Ensure SKU is unique and categories are valid.");
     } finally {
       setSubmitting(false);

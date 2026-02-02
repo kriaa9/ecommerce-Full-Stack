@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import notificationService from '../../api/notificationService';
+import logger from '../../utils/logger';
 import './AdminNotifications.css';
 
 const AdminNotificationsPage = () => {
@@ -16,7 +17,7 @@ const AdminNotificationsPage = () => {
             const data = await notificationService.getNotifications();
             setNotifications(data);
         } catch (err) {
-            console.error('Error fetching notifications:', err);
+            logger.error('Error fetching notifications:', err);
         } finally {
             setLoading(false);
         }
@@ -25,11 +26,11 @@ const AdminNotificationsPage = () => {
     const markAsRead = async (id) => {
         try {
             await notificationService.markAsRead(id);
-            setNotifications(prev => 
+            setNotifications(prev =>
                 prev.map(n => n.id === id ? { ...n, read: true } : n)
             );
         } catch (err) {
-            console.error('Error marking as read:', err);
+            logger.error('Error marking as read:', err);
         }
     };
 

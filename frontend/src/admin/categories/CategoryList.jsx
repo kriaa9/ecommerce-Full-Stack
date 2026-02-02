@@ -1,8 +1,9 @@
-import {useEffect, useState} from 'react';
-import {Link} from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import categoryService from '../../api/categoryService';
-import DataTable from '../../components/DataTable';
 import ConfirmModal from '../../components/ConfirmModal';
+import DataTable from '../../components/DataTable';
+import logger from '../../utils/logger';
 
 /**
  * CategoryList - Page to display all categories with CRUD actions
@@ -27,7 +28,7 @@ const CategoryList = () => {
             setCategories(data);
             setError(null);
         } catch (err) {
-            console.error('Error fetching categories:', err);
+            logger.error('Error fetching categories:', err);
             setError('Failed to load categories. Please try again.');
         } finally {
             setLoading(false);
@@ -45,7 +46,7 @@ const CategoryList = () => {
             setCategories(categories.filter(cat => cat.id !== selectedId));
             setIsModalOpen(false);
         } catch (err) {
-            console.error('Error deleting category:', err);
+            logger.error('Error deleting category:', err);
             alert('Failed to delete category.');
         }
     };

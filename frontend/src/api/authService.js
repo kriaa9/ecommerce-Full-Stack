@@ -39,22 +39,36 @@ export const authService = {
    */
   logout: async () => {
     try {
-      // 1. Attempt to tell the server we are logging out
+      // Attempt to tell the server we are logging out
       await api.post(AUTH_ENDPOINTS.LOGOUT);
-    } catch (error) {
-      console.error("Server logout failed (token might be expired), clearing local session anyway.", error);
+    } catch {
+      // Silent fail - token might be expired, continue with local cleanup
     } finally {
-      // 2. Always remove token from local storage, even if server request fails
+      // Always remove token from local storage
       localStorage.removeItem('token');
     }
   },
 
   /**
-   * Check if user is authenticated
+   * Check if user is authenticated and token is not expired
    * @returns {boolean}
    */
   isAuthenticated: () => {
-    return !!localStorage.getItem('token');
+    const token = localStorage.getItem('token');
+    if (!token) return false;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      // Check if token is expired (exp is in seconds, Date.now() in ms)
+      if (payload.exp && payload.exp * 1000 < Date.now()) {
+        localStorage.removeItem('token'); // Clean up expired token
+        return false;
+      }
+      return true;
+    } catch {
+      localStorage.removeItem('token'); // Clean up invalid token
+      return false;
+    }
   },
 
   /**
@@ -72,7 +86,7 @@ export const authService = {
   getUserRole: () => {
     const token = localStorage.getItem('token');
     if (!token) return null;
-    
+
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
       // Handle both 'role' and 'authorities' formats from Spring Security

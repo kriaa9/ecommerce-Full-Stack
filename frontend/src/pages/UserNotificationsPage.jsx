@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import userNotificationService from '../api/userNotificationService';
+import logger from '../utils/logger';
 import './UserNotificationsPage.css';
 
 /**
@@ -22,7 +23,7 @@ const UserNotificationsPage = () => {
             const data = await userNotificationService.getNotifications();
             setNotifications(data);
         } catch (err) {
-            console.error('Error fetching notifications:', err);
+            logger.error('Error fetching notifications:', err);
         } finally {
             setLoading(false);
         }
@@ -38,7 +39,7 @@ const UserNotificationsPage = () => {
                 prev.map(n => n.id === id ? { ...n, read: true } : n)
             );
         } catch (err) {
-            console.error('Error marking notification as read:', err);
+            logger.error('Error marking notification as read:', err);
         }
     };
 
