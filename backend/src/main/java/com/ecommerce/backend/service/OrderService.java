@@ -51,13 +51,12 @@ public class OrderService {
                 // Collect all requested product IDs and load them in one query
                 List<Long> requestedProductIds = request.getItems().stream()
                                 .map(OrderRequest.OrderItemRequest::getProductId)
+                                .distinct()
                                 .collect(Collectors.toList());
 
                 Map<Long, Product> productLookup = productRepository.findAllById(requestedProductIds)
                                 .stream()
                                 .collect(Collectors.toMap(Product::getId, Function.identity()));
-
-                List<Product> modifiedProducts = new ArrayList<>();
 
                 for (OrderRequest.OrderItemRequest itemReq : request.getItems()) {
                         Product product = productLookup.get(itemReq.getProductId());
@@ -72,7 +71,6 @@ public class OrderService {
                         }
 
                         product.setStockQuantity(product.getStockQuantity() - itemReq.getQuantity());
-                        modifiedProducts.add(product);
 
                         OrderItem item = OrderItem.builder()
                                         .order(order)
@@ -86,8 +84,8 @@ public class OrderService {
                                         .add(product.getPrice().multiply(BigDecimal.valueOf(itemReq.getQuantity())));
                 }
 
-                // Persist all stock changes in a single batch
-                productRepository.saveAll(modifiedProducts);
+                // Persist all stock changes in a single batch (use values() to deduplicate)
+                productRepository.saveAll(productLookup.values());
 
                 order.setTotalAmount(totalAmount);
                 order.getItems().addAll(orderItems);
