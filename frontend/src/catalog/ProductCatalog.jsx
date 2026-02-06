@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import authService from '../api/authService';
 import productService from '../api/productService';
 import { useCart } from '../context/CartContext';
@@ -8,14 +8,15 @@ import './ProductCatalog.css';
 const ProductCatalog = () => {
   const { addToCart } = useCart();
   const [products, setProducts] = useState([]);
-  const [filteredProducts, setFilteredProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
   const [priceRange, setPriceRange] = useState({ min: 0, max: 1000 });
   const [sortBy, setSortBy] = useState('newest');
+  const debounceTimer = useRef(null);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,7 +29,6 @@ const ProductCatalog = () => {
 
         // Products loaded successfully
         setProducts(productsData);
-        setFilteredProducts(productsData);
         setCategories(Array.isArray(categoriesData) ? categoriesData : []);
 
         // Find max price for initial range
@@ -49,27 +49,31 @@ const ProductCatalog = () => {
     fetchData();
   }, []);
 
+  // Debounce the search input so filtering doesn't fire on every keystroke
   useEffect(() => {
+    if (debounceTimer.current) clearTimeout(debounceTimer.current);
+    debounceTimer.current = setTimeout(() => setDebouncedSearch(searchTerm), 250);
+    return () => { if (debounceTimer.current) clearTimeout(debounceTimer.current); };
+  }, [searchTerm]);
+
+  // Derive the visible product list — no extra state needed
+  const filteredProducts = useMemo(() => {
     let result = [...products];
 
-    // Filter by search term
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
+    if (debouncedSearch) {
+      const lowerTerm = debouncedSearch.toLowerCase();
       result = result.filter(p =>
-        p.name.toLowerCase().includes(term) ||
-        p.description?.toLowerCase().includes(term)
+        p.name.toLowerCase().includes(lowerTerm) ||
+        p.description?.toLowerCase().includes(lowerTerm)
       );
     }
 
-    // Filter by category
     if (selectedCategory !== 'all') {
       result = result.filter(p => p.category?.id === parseInt(selectedCategory));
     }
 
-    // Filter by price
     result = result.filter(p => p.price >= priceRange.min && p.price <= priceRange.max);
 
-    // Sort
     if (sortBy === 'price-low') {
       result.sort((a, b) => a.price - b.price);
     } else if (sortBy === 'price-high') {
@@ -78,8 +82,8 @@ const ProductCatalog = () => {
       result.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     }
 
-    setFilteredProducts(result);
-  }, [searchTerm, selectedCategory, priceRange, sortBy, products]);
+    return result;
+  }, [debouncedSearch, selectedCategory, priceRange, sortBy, products]);
 
   if (loading) return <div className="catalog-loading">Loading our collection...</div>;
 

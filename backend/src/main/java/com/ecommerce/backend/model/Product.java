@@ -21,6 +21,9 @@ import java.util.List;
 @Entity
 @Table(name = "products", uniqueConstraints = {
         @UniqueConstraint(columnNames = "sku")
+}, indexes = {
+        @Index(name = "idx_product_active", columnList = "is_active"),
+        @Index(name = "idx_product_category", columnList = "category_id")
 })
 // Fixes "LazyInitializationException" when sending JSON to frontend
 @com.fasterxml.jackson.annotation.JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })

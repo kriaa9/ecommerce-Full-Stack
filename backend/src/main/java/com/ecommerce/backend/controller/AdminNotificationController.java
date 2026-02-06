@@ -42,10 +42,7 @@ public class AdminNotificationController {
      */
     @PatchMapping("/{id}/read")
     public ResponseEntity<Void> markAsRead(@PathVariable Long id) {
-        notificationRepository.findById(id).ifPresent(n -> {
-            n.setRead(true);
-            notificationRepository.save(n);
-        });
+        notificationRepository.markReadById(id);
         return ResponseEntity.ok().build();
     }
 }

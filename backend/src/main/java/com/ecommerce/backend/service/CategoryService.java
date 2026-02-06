@@ -20,6 +20,12 @@ public class CategoryService {
         return categoryRepository.findAll();
     }
 
+    // get single category by its primary key
+    public Category getCategoryById(Long id) {
+        return categoryRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Category not found with ID: " + id));
+    }
+
     // create a new category
     public Category createCategory(CategoryRequest request) {
         if (categoryRepository.existsByName(request.getName())) {

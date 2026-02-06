@@ -41,10 +41,7 @@ public class ProductService {
     }
 
     public List<Product> getAllActiveProducts() {
-        // We filter stream to return ONLY active products to the public catalog
-        return productRepository.findAll().stream()
-                .filter(product -> Boolean.TRUE.equals(product.getActive()))
-                .collect(Collectors.toList());
+        return productRepository.findByActiveTrue();
     }
 
     public Product getProductById(Long id) {
@@ -148,10 +145,7 @@ public class ProductService {
         long totalCategories = categoryRepository.count();
         long totalOrders = orderRepository.count();
 
-        List<Product> products = productRepository.findAll();
-        java.math.BigDecimal totalValue = products.stream()
-                .map(product -> product.getPrice().multiply(java.math.BigDecimal.valueOf(product.getStockQuantity())))
-                .reduce(java.math.BigDecimal.ZERO, java.math.BigDecimal::add);
+        java.math.BigDecimal totalValue = productRepository.sumInventoryValue();
 
         return com.ecommerce.backend.dto.DashboardStatsResponse.builder()
                 .totalProducts(totalProducts)

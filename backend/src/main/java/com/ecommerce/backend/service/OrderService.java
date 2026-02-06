@@ -17,6 +17,9 @@ import java.math.BigDecimal;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,32 +48,44 @@ public class OrderService {
                                 .items(new ArrayList<>())
                                 .build();
 
+                // Collect all requested product IDs and load them in one query
+                List<Long> requestedProductIds = request.getItems().stream()
+                                .map(OrderRequest.OrderItemRequest::getProductId)
+                                .distinct()
+                                .collect(Collectors.toList());
+
+                Map<Long, Product> productLookup = productRepository.findAllById(requestedProductIds)
+                                .stream()
+                                .collect(Collectors.toMap(Product::getId, Function.identity()));
+
                 for (OrderRequest.OrderItemRequest itemReq : request.getItems()) {
-                        Product product = productRepository.findById(itemReq.getProductId())
-                                        .orElseThrow(() -> new EntityNotFoundException(
-                                                        "Product not found: " + itemReq.getProductId()));
+                        Product product = productLookup.get(itemReq.getProductId());
+                        if (product == null) {
+                                throw new EntityNotFoundException(
+                                                "Product not found: " + itemReq.getProductId());
+                        }
 
                         if (product.getStockQuantity() < itemReq.getQuantity()) {
                                 throw new IllegalArgumentException(
                                                 "Insufficient stock for product: " + product.getName());
                         }
 
-                        // Deduct Stock
                         product.setStockQuantity(product.getStockQuantity() - itemReq.getQuantity());
-                        productRepository.save(product);
 
-                        // Create Order Item
                         OrderItem item = OrderItem.builder()
                                         .order(order)
                                         .product(product)
                                         .quantity(itemReq.getQuantity())
-                                        .price(product.getPrice()) // Snapshot price
+                                        .price(product.getPrice())
                                         .build();
 
                         orderItems.add(item);
                         totalAmount = totalAmount
                                         .add(product.getPrice().multiply(BigDecimal.valueOf(itemReq.getQuantity())));
                 }
+
+                // Persist all stock changes in a single batch (use values() to deduplicate)
+                productRepository.saveAll(productLookup.values());
 
                 order.setTotalAmount(totalAmount);
                 order.getItems().addAll(orderItems);
@@ -84,11 +99,13 @@ public class OrderService {
         }
 
         private void createOrderNotification(Order order) {
+                String notifText = String.format("Order #%d received from %s. Total: $%s",
+                                order.getId(),
+                                order.getUser().getEmail(),
+                                order.getTotalAmount());
+
                 Notification notification = Notification.builder()
-                                .message(
-                                                "Order #" + order.getId() + " received from "
-                                                                + order.getUser().getEmail() + ". Total: $"
-                                                                + order.getTotalAmount())
+                                .message(notifText)
                                 .type("NEW_ORDER")
                                 .targetId(order.getId())
                                 .isRead(false)
