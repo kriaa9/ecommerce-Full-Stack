@@ -41,8 +41,7 @@ const CategoryForm = () => {
         const fetchCategory = async () => {
             try {
                 setLoading(true);
-                const cats = await categoryService.getCategories();
-                const category = cats.find(cat => cat.id === parseInt(id));
+                const category = await categoryService.getCategoryById(id);
 
                 if (category) {
                     setFormData({

@@ -83,8 +83,7 @@ const ProductForm = () => {
         setCategories(Array.isArray(cats) ? cats : []);
 
         if (isEditMode) {
-          const products = await productService.getAdminProducts();
-          const product = products.find((p) => p.id === parseInt(id));
+          const product = await productService.getProductById(id);
 
           if (product) {
             setFormData({

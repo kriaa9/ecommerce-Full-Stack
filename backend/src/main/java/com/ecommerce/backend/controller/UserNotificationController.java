@@ -52,13 +52,7 @@ public class UserNotificationController {
     @PatchMapping("/{id}/read")
     public ResponseEntity<Void> markAsRead(@PathVariable Long id, Principal principal) {
         User user = getUserFromPrincipal(principal);
-        notificationRepository.findById(id).ifPresent(notification -> {
-            // Only allow marking as read if notification belongs to the user
-            if (notification.getUser() != null && notification.getUser().getId().equals(user.getId())) {
-                notification.setRead(true);
-                notificationRepository.save(notification);
-            }
-        });
+        notificationRepository.markReadByIdAndOwner(id, user.getId());
         return ResponseEntity.ok().build();
     }
 

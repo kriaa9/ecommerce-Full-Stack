@@ -16,7 +16,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "orders")
+@Table(name = "orders", indexes = {
+        @Index(name = "idx_order_user", columnList = "user_id")
+})
 public class Order {
 
     @Id

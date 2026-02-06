@@ -18,7 +18,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "notifications")
+@Table(name = "notifications", indexes = {
+        @Index(name = "idx_notification_user", columnList = "user_id"),
+        @Index(name = "idx_notification_user_read", columnList = "user_id, is_read")
+})
 public class Notification {
 
     @Id

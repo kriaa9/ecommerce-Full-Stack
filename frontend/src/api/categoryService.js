@@ -15,6 +15,14 @@ const categoryService = {
     },
 
     /**
+     * Get a single category by its ID (Public)
+     */
+    getCategoryById: async (categoryId) => {
+        const response = await api.get(`${CATEGORY_ENDPOINTS.PUBLIC}/${categoryId}`);
+        return response.data;
+    },
+
+    /**
      * Create a new category (Admin)
      */
     createCategory: async (categoryData) => {
